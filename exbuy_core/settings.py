@@ -2,16 +2,29 @@
 Django settings for exbuy_core project.
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
+import dj_database_url  # ✅ Railway Postgres support
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-@6h_uo^ao^7eja#y@u@fm!zlxs=nhg=@7oe0xp4y5%mmua0(#_"
-DEBUG = True
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+# -----------------------------
+# Security / Environment
+# -----------------------------
+SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-secret-key")
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "exbuy-production.up.railway.app",
+    "exbuy.vercel.app",
+]
+
+# -----------------------------
 # Custom user model
+# -----------------------------
 AUTH_USER_MODEL = "accounts.User"
 
 # -----------------------------
@@ -27,11 +40,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     # Third-party apps
-    "rest_framework",        # ✅ DRF
-    "drf_spectacular",       # ✅ API schema/docs
-    "corsheaders",           # ✅ CORS
-    "django_filters",        # ✅ filtering
-    "channels",              # ✅ WebSocket support
+    "rest_framework",
+    "drf_spectacular",
+    "corsheaders",
+    "django_filters",
+    "channels",
 
     # Local apps
     "shipments",
@@ -41,7 +54,6 @@ INSTALLED_APPS = [
     "billing",
     "tracking",
     "ops",
-    # "catalog",
 ]
 
 # -----------------------------
@@ -58,8 +70,15 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-# ✅ Allow frontend (Next.js) to call Django backend
-CORS_ALLOW_ALL_ORIGINS = True   # later restrict to http://localhost:3000
+# -----------------------------
+# CORS / CSRF
+# -----------------------------
+CORS_ALLOWED_ORIGINS = [
+    "https://exbuy.vercel.app",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://exbuy.vercel.app",
+]
 
 ROOT_URLCONF = "exbuy_core.urls"
 
@@ -80,16 +99,17 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "exbuy_core.wsgi.application"
-ASGI_APPLICATION = "exbuy_core.asgi.application"  # ✅ Channels entrypoint
+ASGI_APPLICATION = "exbuy_core.asgi.application"
 
 # -----------------------------
-# Database
+# Database (Railway Postgres)
 # -----------------------------
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"),
+        conn_max_age=600,
+        ssl_require=True,
+    )
 }
 
 # -----------------------------
@@ -114,6 +134,7 @@ USE_TZ = True
 # Static files
 # -----------------------------
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -122,10 +143,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # -----------------------------
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",  # ✅ JWT only
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",  # ✅ require login
+        "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
@@ -159,13 +180,13 @@ SIMPLE_JWT = {
 }
 
 # -----------------------------
-# Channels / Redis Layer
+# Channels / Redis Layer (Railway Redis)
 # -----------------------------
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],  # ✅ Redis server must be running
+            "hosts": [os.environ.get("REDIS_URL", "redis://127.0.0.1:6379")],
         },
     },
 }
