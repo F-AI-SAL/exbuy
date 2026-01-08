@@ -40,10 +40,11 @@ export default function AccountDropdown() {
   const initials = user?.firstName
     ? user.firstName.charAt(0).toUpperCase()
     : user?.email
-      ? user.email.charAt(0).toUpperCase()
-      : 'U';
+    ? user.email.charAt(0).toUpperCase()
+    : 'U';
 
-  const accountPurpose = user?.purpose ?? 'Self Order';
+  // ✅ Safe access: cast to any to avoid TS error if 'purpose' not in UserInfo type
+  const accountPurpose = (user as any)?.purpose ?? 'Self Order';
 
   return (
     <div className="relative" ref={ref}>
@@ -58,7 +59,7 @@ export default function AccountDropdown() {
         {user?.avatarUrl ? (
           <img
             src={user.avatarUrl}
-            alt={user.firstName ?? 'User'}
+            alt={user?.firstName ?? 'User'}
             className="h-8 w-8 rounded-full object-cover"
           />
         ) : (
@@ -84,7 +85,7 @@ export default function AccountDropdown() {
             {user?.avatarUrl ? (
               <img
                 src={user.avatarUrl}
-                alt={user.firstName ?? 'User'}
+                alt={user?.firstName ?? 'User'}
                 className="h-10 w-10 rounded-full object-cover"
               />
             ) : (
