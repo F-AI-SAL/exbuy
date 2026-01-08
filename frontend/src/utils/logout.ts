@@ -17,9 +17,19 @@ export async function logout(): Promise<void> {
       // ✅ Redirect to signin page
       window.location.href = '/signin';
     } else {
-      console.error('❌ Logout failed:', await res.json());
+      // Try to parse error response safely
+      let errorMsg = 'Logout failed';
+      try {
+        const data = await res.json();
+        errorMsg = data?.error || errorMsg;
+      } catch {
+        // ignore parse error
+      }
+      console.error('❌ Logout failed:', errorMsg);
+      alert(errorMsg);
     }
   } catch (err) {
     console.error('❌ Logout error:', err);
+    alert('Server error during logout');
   }
 }
