@@ -1,9 +1,11 @@
+// frontend/src/components/header/UserProfile.tsx
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useUser } from '@/lib/useUser';
 import Link from 'next/link';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Transition } from '@headlessui/react';
+import { logout } from '@/utils/logout'; // ✅ Import logout helper
 
 function initialsFrom(user: { firstName?: string; email?: string }) {
   if (user.firstName) return user.firstName.charAt(0).toUpperCase();
@@ -111,10 +113,11 @@ export default function UserProfile() {
               </Link>
             </li>
             <li>
+              {/* ✅ Logout now calls helper */}
               <button
-                onClick={() => alert('Logout triggered!')}
+                onClick={logout}
                 className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 
-                           hover:bg-red-50 dark:hover:bg-zinc-800 transition-colors"
+                           hover:bg-red-50 dark:hover:bg-zinc-800 transition-colors font-semibold text-red-600"
               >
                 Logout
               </button>

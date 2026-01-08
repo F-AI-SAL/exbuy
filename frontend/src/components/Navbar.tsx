@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Image from 'next/image';
+import { logout } from '@/utils/logout'; // ✅ Import logout helper
 
 interface MenuItem {
   name: string;
@@ -171,7 +172,11 @@ export default function Navbar() {
                 >
                   Settings
                 </Link>
-                <button className="w-full text-left px-4 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800">
+                {/* ✅ Logout button now calls helper */}
+                <button
+                  onClick={logout}
+                  className="w-full text-left px-4 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
                   Logout
                 </button>
               </div>
@@ -254,6 +259,7 @@ export default function Navbar() {
               >
                 Account
               </Link>
+              {/* ✅ Logout option in mobile menu */} <button onClick={() => { setMenuOpen(false); logout(); }} className="text-left hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" > Logout </button>
             </nav>
           </div>
         </div>

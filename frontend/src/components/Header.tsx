@@ -1,4 +1,6 @@
+// frontend/src/components/Header.tsx
 'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
@@ -37,7 +39,7 @@ export default function Header() {
   // ✅ Stable deterministic ID to avoid hydration mismatch
   const menuId = 'categories-menu';
 
-  // Reduced motion respect
+  // Respect reduced motion
   useEffect(() => {
     const mq = window.matchMedia?.('(prefers-reduced-motion: reduce)');
     setPrefersReduced(mq?.matches ?? false);
@@ -111,7 +113,11 @@ export default function Header() {
             {/* Desktop nav */}
             <div className="hidden md:flex items-center gap-2">
               {/* Categories button */}
-              <div className="relative" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+              <div
+                className="relative"
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+              >
                 <button
                   ref={buttonRef}
                   aria-haspopup="menu"
@@ -187,6 +193,7 @@ export default function Header() {
             <Notifications />
             <ShippingList />
             <CartButton />
+            {/* ✅ AccountDropdown already contains Logout option */}
             <AccountDropdown />
           </div>
 

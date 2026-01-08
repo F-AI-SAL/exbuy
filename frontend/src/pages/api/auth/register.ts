@@ -3,16 +3,22 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
 import bcrypt from 'bcryptjs';
-import mongoose from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 
-// ✅ MongoDB connection helper
+// ✅ MongoDB connection helper (prevent multiple connections in serverless)
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/exbuy';
 
-if (!mongoose.connection.readyState) {
-  mongoose.connect(MONGODB_URI).catch((err) => {
-    console.error('MongoDB connection error:', err);
-  });
+declare global {
+  // Prevents model overwrite in Next.js hot reload
+  // eslint-disable-next-line no-var
+  var mongooseConn: Connection | null;
 }
+
+if (!global.mongooseConn) {
+  global.mongooseConn = mongoose.createConnection(MONGODB_URI);
+}
+
+const conn = global.mongooseConn;
 
 // ✅ User schema/model
 const UserSchema = new mongoose.Schema({
@@ -21,7 +27,7 @@ const UserSchema = new mongoose.Schema({
   password: { type: String, required: true }, // hashed
 });
 
-const User = mongoose.models.User || mongoose.model('User', UserSchema);
+const User = conn.models.User || conn.model('User', UserSchema);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {

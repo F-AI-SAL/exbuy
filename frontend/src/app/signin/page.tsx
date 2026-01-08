@@ -16,7 +16,7 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setMessage(null);
     setLoading(true);
@@ -27,13 +27,14 @@ export default function SignInPage() {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: email, password }), // ✅ Django SimpleJWT expects "username"
+          body: JSON.stringify({ username: email, password }), // Django SimpleJWT expects "username"
         }
       );
 
       const data: TokenResponse = await res.json();
 
       if (res.ok && data.access && data.refresh) {
+        // ✅ Safe localStorage usage (client component)
         localStorage.setItem('access', data.access);
         localStorage.setItem('refresh', data.refresh);
         setMessage('✅ Sign in successful! Redirecting...');
@@ -100,7 +101,7 @@ export default function SignInPage() {
 
       <p className="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">
         Don’t have an account?{' '}
-        <a href="/signup" className="text-green-600 hover:underline dark:text-green-400">
+        <a href="/register" className="text-green-600 hover:underline dark:text-green-400">
           Sign Up
         </a>
       </p>

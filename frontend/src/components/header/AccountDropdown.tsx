@@ -1,3 +1,4 @@
+// frontend/src/components/header/AccountDropdown.tsx
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { useUser } from '@/lib/useUser';
@@ -13,6 +14,7 @@ import {
   ArrowRightOnRectangleIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { logout } from '@/utils/logout'; // ✅ Import logout helper
 
 export default function AccountDropdown() {
   const [open, setOpen] = useState(false);
@@ -181,8 +183,9 @@ export default function AccountDropdown() {
             <hr className="my-1 border-gray-200 dark:border-zinc-700" />
 
             <li>
+              {/* ✅ Logout now calls helper */}
               <button
-                onClick={() => alert('Logging out…')}
+                onClick={logout}
                 className="flex items-center gap-2 w-full text-left px-4 py-2 hover:bg-red-50 dark:hover:bg-zinc-800 text-red-600 transition-colors duration-200 font-semibold"
               >
                 <ArrowRightOnRectangleIcon className="h-5 w-5 text-red-500" />
