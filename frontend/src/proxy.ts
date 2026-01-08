@@ -1,5 +1,5 @@
-// frontend/src/middleware.ts
-// Enterprise‑grade middleware for route protection and RBAC in Next.js.
+// frontend/src/proxy.ts
+// Enterprise‑grade proxy for route protection and RBAC in Next.js.
 // Ensures authentication and role-based access control for protected routes.
 
 import { NextResponse } from 'next/server';
@@ -9,7 +9,8 @@ import { jwtVerify } from 'jose';
 const protectedRoutes: string[] = ['/checkout', '/wishlist'];
 const adminRoutes: string[] = ['/admin'];
 
-export async function middleware(req: NextRequest) {
+// ✅ Must be default export named function "proxy"
+export default async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Check if route is protected or admin
@@ -52,6 +53,7 @@ export async function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
+// ✅ Config matcher stays same
 export const config = {
   matcher: ['/checkout/:path*', '/wishlist/:path*', '/admin/:path*'],
 };
