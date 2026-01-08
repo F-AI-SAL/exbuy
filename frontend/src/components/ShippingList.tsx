@@ -1,11 +1,6 @@
 'use client';
 
-import useShipmentsWS  from '@/hooks/useShipmentsWS';
-
-interface Shipment {
-  id: string | number;
-  status: string;
-}
+import useShipmentsWS, { Shipment }  from '@/hooks/useShipmentsWS';
 
 export default function ShippingList() {
   const items: Shipment[] = useShipmentsWS('ws://localhost:8000/ws/shipments/');

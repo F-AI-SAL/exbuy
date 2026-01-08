@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 
-interface Shipment {
+export interface Shipment {
   id: string | number;
+  status: string;
   [key: string]: any;
 }
 
