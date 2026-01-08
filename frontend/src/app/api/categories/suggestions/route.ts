@@ -5,6 +5,7 @@
 
 import { NextResponse } from 'next/server';
 import connectDB from '../../../../lib/mongodb';
+import { Db, ObjectId } from 'mongodb';
 
 // Utility: Levenshtein distance (edit distance)
 function levenshtein(a: string, b: string): number {
@@ -31,6 +32,15 @@ function levenshtein(a: string, b: string): number {
   return matrix[alen][blen];
 }
 
+// ✅ Safe DB getter
+async function getDB(): Promise<Db> {
+  const conn = await connectDB();
+  if (!conn?.connection?.db) {
+    throw new Error('Database connection not initialized');
+  }
+  return conn.connection.db as Db;
+}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -46,8 +56,7 @@ export async function GET(req: Request) {
       });
     }
 
-    const conn = await connectDB();
-    const db = conn.connection.db;
+    const db = await getDB();
 
     const products = await db.collection('products').find({}).toArray();
 
@@ -106,8 +115,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const conn = await connectDB();
-    const db = conn.connection.db;
+    const db = await getDB();
 
     // Auto-increment popularity based on event type
     const incrementValue = eventType === 'sale' ? 5 : 1; // sale = +5, click = +1
