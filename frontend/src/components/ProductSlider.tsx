@@ -30,17 +30,17 @@ export default function ProductCarousel({ endpoint, title }: { endpoint: string;
   // Auto-scroll logic
   useEffect(() => {
     if (!items.length) return;
+
     const startAutoScroll = () => {
       if (!carouselRef.current) return;
       intervalRef.current = setInterval(() => {
-        if (!carouselRef.current) return;
-        carouselRef.current.scrollBy({ left: 220, behavior: 'smooth' });
+        const el = carouselRef.current;
+        if (!el) return; // ✅ guard inside callback
+
+        el.scrollBy({ left: 220, behavior: 'smooth' });
         // Loop back to start
-        if (
-          carouselRef.current.scrollLeft + carouselRef.current.clientWidth >=
-          carouselRef.current.scrollWidth
-        ) {
-          carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        if (el.scrollLeft + el.clientWidth >= el.scrollWidth) {
+          el.scrollTo({ left: 0, behavior: 'smooth' });
         }
       }, 3000);
     };
@@ -55,15 +55,16 @@ export default function ProductCarousel({ endpoint, title }: { endpoint: string;
   const handleMouseEnter = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
   };
+
   const handleMouseLeave = () => {
     if (!carouselRef.current) return;
     intervalRef.current = setInterval(() => {
-      carouselRef.current.scrollBy({ left: 220, behavior: 'smooth' });
-      if (
-        carouselRef.current.scrollLeft + carouselRef.current.clientWidth >=
-        carouselRef.current.scrollWidth
-      ) {
-        carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+      const el = carouselRef.current;
+      if (!el) return; // ✅ guard inside callback
+
+      el.scrollBy({ left: 220, behavior: 'smooth' });
+      if (el.scrollLeft + el.clientWidth >= el.scrollWidth) {
+        el.scrollTo({ left: 0, behavior: 'smooth' });
       }
     }, 3000);
   };
