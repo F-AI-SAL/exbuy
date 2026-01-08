@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
 import { CATEGORIES } from '@/lib/config';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
 import {
@@ -32,7 +32,7 @@ export default function Categories() {
   }, []);
 
   // Example icon mapping (you can extend this)
-  const iconMap: Record<string, JSX.Element> = {
+  const iconMap: Record<string, ReactNode> = {
     Fashion: <SparklesIcon className="h-5 w-5 text-pink-500" />,
     Electronics: <DevicePhoneMobileIcon className="h-5 w-5 text-blue-500" />,
     Grocery: <ShoppingBagIcon className="h-5 w-5 text-green-500" />,
