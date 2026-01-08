@@ -1,20 +1,14 @@
 // frontend/src/app/api/categories/route.ts
-// Enterprise‑grade Categories API route with pagination + search.
-// GET    → fetch categories (with pagination + search)
-// POST   → insert new category
-// PATCH  → update category by id
-// DELETE → remove category by id
-
 import connectDB from '../../../lib/mongodb';
-import { ObjectId } from 'mongodb';
+import { ObjectId, Db } from 'mongodb';
 import { NextResponse } from 'next/server';
 
-async function getDB() {
+async function getDB(): Promise<Db> {
   const conn = await connectDB();
   if (!conn?.connection?.db) {
     throw new Error('Database connection not initialized');
   }
-  return conn.connection.db;
+  return conn.connection.db as Db;
 }
 
 export async function GET(req: Request) {
@@ -65,118 +59,13 @@ export async function GET(req: Request) {
   }
 }
 
+// একইভাবে POST, PATCH, DELETE এও ব্যবহার করো:
 export async function POST(req: Request) {
   try {
     const db = await getDB();
     const body = await req.json();
-
-    if (!body?.name || !body?.slug) {
-      return NextResponse.json(
-        { success: false, error: 'Missing required fields: name, slug' },
-        { status: 400 }
-      );
-    }
-
-    const result = await db.collection('categories').insertOne({
-      name: body.name,
-      slug: body.slug,
-      image: body.image ?? null,
-      createdAt: new Date(),
-    });
-
-    return NextResponse.json({
-      success: true,
-      id: result.insertedId,
-      message: 'Category created successfully',
-    });
+    // ...rest of your code
   } catch (err) {
-    console.error('❌ POST category error:', err);
-    return NextResponse.json(
-      { success: false, error: 'Failed to create category' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function PATCH(req: Request) {
-  try {
-    const db = await getDB();
-    const body = await req.json();
-
-    const { id, name, slug, image } = body;
-
-    if (!id) {
-      return NextResponse.json(
-        { success: false, error: 'Missing category id' },
-        { status: 400 }
-      );
-    }
-
-    const updateFields: Record<string, any> = {};
-    if (name) updateFields.name = name;
-    if (slug) updateFields.slug = slug;
-    if (image !== undefined) updateFields.image = image;
-
-    const result = await db.collection('categories').updateOne(
-      { _id: new ObjectId(id) },
-      { $set: updateFields }
-    );
-
-    if (result.matchedCount === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Category not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      id,
-      message: 'Category updated successfully',
-    });
-  } catch (err) {
-    console.error('❌ PATCH category error:', err);
-    return NextResponse.json(
-      { success: false, error: 'Failed to update category' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE(req: Request) {
-  try {
-    const db = await getDB();
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
-
-    if (!id) {
-      return NextResponse.json(
-        { success: false, error: 'Missing id' },
-        { status: 400 }
-      );
-    }
-
-    const result = await db.collection('categories').deleteOne({
-      _id: new ObjectId(id),
-    });
-
-    if (result.deletedCount === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Category not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({
-      success: true,
-      id,
-      message: 'Category deleted successfully',
-    });
-  } catch (err) {
-    console.error('❌ DELETE category error:', err);
-    return NextResponse.json(
-      { success: false, error: 'Failed to delete category' },
-      { status: 500 }
-    );
+    // error handling
   }
 }
