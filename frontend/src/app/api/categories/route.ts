@@ -9,6 +9,14 @@ import connectDB from '../../../lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { NextResponse } from 'next/server';
 
+async function getDB() {
+  const conn = await connectDB();
+  if (!conn?.connection?.db) {
+    throw new Error('Database connection not initialized');
+  }
+  return conn.connection.db;
+}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -16,8 +24,7 @@ export async function GET(req: Request) {
     const limit = parseInt(searchParams.get('limit') || '10', 10);
     const query = searchParams.get('q')?.toLowerCase() || '';
 
-    const conn = await connectDB();
-    const db = conn.connection.db;
+    const db = await getDB();
 
     const filter: Record<string, any> = {};
     if (query) {
@@ -60,8 +67,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const conn = await connectDB();
-    const db = conn.connection.db;
+    const db = await getDB();
     const body = await req.json();
 
     if (!body?.name || !body?.slug) {
@@ -94,8 +100,7 @@ export async function POST(req: Request) {
 
 export async function PATCH(req: Request) {
   try {
-    const conn = await connectDB();
-    const db = conn.connection.db;
+    const db = await getDB();
     const body = await req.json();
 
     const { id, name, slug, image } = body;
@@ -140,8 +145,7 @@ export async function PATCH(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const conn = await connectDB();
-    const db = conn.connection.db;
+    const db = await getDB();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 
