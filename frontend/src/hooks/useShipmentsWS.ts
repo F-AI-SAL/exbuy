@@ -6,7 +6,7 @@ interface Shipment {
   [key: string]: any;
 }
 
-export function useShipmentsWS(url: string) {
+export default function useShipmentsWS(url: string) {
   const [items, setItems] = useState<Shipment[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimer = useRef<NodeJS.Timeout | null>(null);
@@ -16,7 +16,7 @@ export function useShipmentsWS(url: string) {
     let isMounted = true;
 
     const connect = () => {
-      console.log("🔗 Trying to connect WebSocket:", url);
+      console.log('🔗 Trying to connect WebSocket:', url);
       const ws = new WebSocket(url);
       wsRef.current = ws;
 
@@ -48,7 +48,6 @@ export function useShipmentsWS(url: string) {
       };
 
       ws.onerror = (event) => {
-        // Browser WebSocket error object is often empty, so log more context
         console.error('⚠️ WebSocket error occurred:', {
           url,
           readyState: ws.readyState,
@@ -57,10 +56,11 @@ export function useShipmentsWS(url: string) {
       };
 
       ws.onclose = (evt) => {
-        console.warn(
-          '🔌 Disconnected from shipments WS',
-          { code: evt.code, reason: evt.reason, wasClean: evt.wasClean }
-        );
+        console.warn('🔌 Disconnected from shipments WS', {
+          code: evt.code,
+          reason: evt.reason,
+          wasClean: evt.wasClean,
+        });
         if (heartbeatRef.current) clearInterval(heartbeatRef.current);
         if (isMounted) {
           reconnectTimer.current = setTimeout(connect, 5000); // auto reconnect

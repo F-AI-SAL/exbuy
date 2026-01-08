@@ -1,6 +1,6 @@
 'use client';
 
-import useShipmentsWS from '@/hooks/useShipmentsWS';
+import useShipmentsWS  from '@/hooks/useShipmentsWS';
 
 interface Shipment {
   id: string | number;
