@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-type TokenResponse = {
-  access?: string;
-  refresh?: string;
-  detail?: string;
+type LoginResponse = {
+  token?: string;
+  error?: string;
 };
 
 export default function SignInPage() {
@@ -22,89 +22,113 @@ export default function SignInPage() {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/api/token/`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: email, password }), // Django SimpleJWT expects "username"
-        }
-      );
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-      const data: TokenResponse = await res.json();
+      const data: LoginResponse = await res.json();
 
-      if (res.ok && data.access && data.refresh) {
-        // ✅ Safe localStorage usage (client component)
-        localStorage.setItem('access', data.access);
-        localStorage.setItem('refresh', data.refresh);
-        setMessage('✅ Sign in successful! Redirecting...');
-        router.push('/calculator');
+      if (res.ok && data.token) {
+        localStorage.setItem('token', data.token);
+        setMessage('Sign in successful. Redirecting...');
+        router.push('/dashboard');
       } else {
-        setMessage(`❌ Invalid credentials: ${data?.detail || 'Please try again.'}`);
+        setMessage(data?.error || 'Invalid credentials. Please try again.');
       }
     } catch (err) {
-      console.error('❌ Sign-in error:', err);
-      setMessage('⚠️ Server error. Please try again later.');
+      console.error('Sign-in error:', err);
+      setMessage('Server error. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="px-6 py-16 max-w-md mx-auto bg-gradient-to-br from-white via-green-50 to-green-100 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 rounded-2xl shadow-xl">
-      <h1 className="text-4xl font-extrabold mb-8 text-center text-gray-900 dark:text-white">
-        Sign In 🔑
-      </h1>
+    <main className="mx-auto flex min-h-[80vh] max-w-5xl items-center px-6 py-12">
+      <div className="grid w-full gap-8 rounded-3xl border border-emerald-100 bg-white p-8 shadow-lg md:grid-cols-[1.1fr_1fr]">
+        <div className="space-y-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
+              ExBuy Access
+            </p>
+            <h1 className="mt-3 text-3xl font-extrabold text-zinc-900">Sign in</h1>
+            <p className="mt-2 text-sm text-zinc-500">
+              Enter your credentials to continue.
+            </p>
+          </div>
 
-      <form
-        className="flex flex-col gap-6 bg-white dark:bg-zinc-900 rounded-xl shadow-lg p-8"
-        onSubmit={handleSignIn}
-      >
-        <input
-          type="text"
-          placeholder="Email / Username"
-          className="p-3 border rounded-md bg-transparent focus:ring-2 focus:ring-green-500 dark:bg-zinc-800 dark:border-zinc-700"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+          <form onSubmit={handleSignIn} className="space-y-4">
+            <div>
+              <label className="text-sm font-semibold text-zinc-700">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-2 w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                placeholder="you@exbuy.com"
+                required
+              />
+            </div>
 
-        <input
-          type="password"
-          placeholder="Password"
-          className="p-3 border rounded-md bg-transparent focus:ring-2 focus:ring-green-500 dark:bg-zinc-800 dark:border-zinc-700"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+            <div>
+              <label className="text-sm font-semibold text-zinc-700">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-2 w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-6 py-3 rounded-md bg-green-600 text-white font-semibold hover:bg-green-700 transition disabled:opacity-50"
-        >
-          {loading ? 'Signing in...' : 'Sign In'}
-        </button>
-      </form>
+            <div className="flex items-center justify-between text-sm">
+              <label className="flex items-center gap-2 text-zinc-600">
+                <input type="checkbox" className="accent-emerald-600" />
+                Remember me
+              </label>
+              <Link href="/forgot-password" className="text-emerald-600 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
 
-      {message && (
-        <div
-          className={`mt-6 text-center font-semibold ${
-            message.startsWith('✅')
-              ? 'text-green-600 dark:text-green-400'
-              : 'text-red-600 dark:text-red-400'
-          }`}
-        >
-          {message}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:opacity-60"
+            >
+              {loading ? 'Signing in...' : 'Sign in'}
+            </button>
+          </form>
+
+          {message && (
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
+              {message}
+            </div>
+          )}
+
+          <p className="text-sm text-zinc-500">
+            New here?{' '}
+            <Link href="/register" className="font-semibold text-emerald-600 hover:underline">
+              Create an account
+            </Link>
+          </p>
         </div>
-      )}
 
-      <p className="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">
-        Don’t have an account?{' '}
-        <a href="/register" className="text-green-600 hover:underline dark:text-green-400">
-          Sign Up
-        </a>
-      </p>
+        <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 text-white">
+          <h2 className="text-xl font-semibold">Enterprise control center</h2>
+          <p className="mt-3 text-sm text-emerald-100">
+            Track orders, automate shipping, and manage your business in one place.
+          </p>
+          <ul className="mt-6 space-y-3 text-sm">
+            <li>Real-time order updates</li>
+            <li>Integrated billing and wallet</li>
+            <li>Multi-channel procurement tools</li>
+          </ul>
+        </div>
+      </div>
     </main>
   );
 }

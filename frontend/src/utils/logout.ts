@@ -1,4 +1,3 @@
-// frontend/src/utils/logout.ts
 'use client';
 
 export async function logout(): Promise<void> {
@@ -9,15 +8,11 @@ export async function logout(): Promise<void> {
     });
 
     if (res.ok) {
-      // ✅ Clear localStorage tokens
       localStorage.removeItem('access');
       localStorage.removeItem('refresh');
       localStorage.removeItem('token');
-
-      // ✅ Redirect to signin page
       window.location.href = '/signin';
     } else {
-      // Try to parse error response safely
       let errorMsg = 'Logout failed';
       try {
         const data = await res.json();
@@ -25,11 +20,11 @@ export async function logout(): Promise<void> {
       } catch {
         // ignore parse error
       }
-      console.error('❌ Logout failed:', errorMsg);
+      console.error('Logout failed:', errorMsg);
       alert(errorMsg);
     }
   } catch (err) {
-    console.error('❌ Logout error:', err);
+    console.error('Logout error:', err);
     alert('Server error during logout');
   }
 }

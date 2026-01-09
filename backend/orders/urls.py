@@ -1,7 +1,8 @@
-# backend/orders/urls.py
 from django.urls import path
-from .views import OrderCreateView
+from .views import OrderCreateView, OrderDetailView, OrderListView
 
 urlpatterns = [
+    path("", OrderListView.as_view(), name="order-list"),
+    path("<uuid:order_id>/", OrderDetailView.as_view(), name="order-detail"),
     path("place/", OrderCreateView.as_view(), name="order-place"),
 ]

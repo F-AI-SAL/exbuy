@@ -1,12 +1,12 @@
-// frontend/src/app/register/page.tsx
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 type RegisterResponse = {
   token?: string;
-  detail?: string;
+  error?: string;
 };
 
 export default function RegisterPage() {
@@ -33,80 +33,105 @@ export default function RegisterPage() {
 
       if (res.ok && data.token) {
         localStorage.setItem('token', data.token);
-        setMessage('✅ Registered successfully! Redirecting...');
-        router.push('/signin');
+        setMessage('Account created. Redirecting...');
+        router.push('/dashboard');
       } else {
-        setMessage(`❌ Registration failed: ${data?.detail || 'Please try again.'}`);
+        setMessage(data?.error || 'Registration failed. Please try again.');
       }
     } catch (err) {
-      console.error('❌ Registration error:', err);
-      setMessage('⚠️ Server error. Please try again later.');
+      console.error('Registration error:', err);
+      setMessage('Server error. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="px-6 py-16 max-w-md mx-auto bg-gradient-to-br from-white via-blue-50 to-blue-100 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 rounded-2xl shadow-xl">
-      <h1 className="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white">
-        Create Account
-      </h1>
+    <main className="mx-auto flex min-h-[80vh] max-w-5xl items-center px-6 py-12">
+      <div className="grid w-full gap-8 rounded-3xl border border-emerald-100 bg-white p-8 shadow-lg md:grid-cols-[1.1fr_1fr]">
+        <div className="space-y-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-600">
+              ExBuy Access
+            </p>
+            <h1 className="mt-3 text-3xl font-extrabold text-zinc-900">Create your account</h1>
+            <p className="mt-2 text-sm text-zinc-500">
+              Set up a new profile in seconds and manage your orders.
+            </p>
+          </div>
 
-      <form
-        className="flex flex-col gap-4 bg-white dark:bg-zinc-900 rounded-xl shadow-lg p-8"
-        onSubmit={handleRegister}
-      >
-        <input
-          type="text"
-          placeholder="Full Name"
-          className="p-3 border rounded-md bg-transparent focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          className="p-3 border rounded-md bg-transparent focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          className="p-3 border rounded-md bg-transparent focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:border-zinc-700"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-6 py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition disabled:opacity-50"
-        >
-          {loading ? 'Registering...' : 'Register'}
-        </button>
-      </form>
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div>
+              <label className="text-sm font-semibold text-zinc-700">Full name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="mt-2 w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                placeholder="Md Faisal Al Islam"
+                required
+              />
+            </div>
 
-      {message && (
-        <div
-          className={`mt-6 text-center font-semibold ${
-            message.startsWith('✅')
-              ? 'text-green-600 dark:text-green-400'
-              : 'text-red-600 dark:text-red-400'
-          }`}
-        >
-          {message}
+            <div>
+              <label className="text-sm font-semibold text-zinc-700">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-2 w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                placeholder="you@exbuy.com"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-zinc-700">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="mt-2 w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                placeholder="Create a strong password"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:opacity-60"
+            >
+              {loading ? 'Creating account...' : 'Create account'}
+            </button>
+          </form>
+
+          {message && (
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-700">
+              {message}
+            </div>
+          )}
+
+          <p className="text-sm text-zinc-500">
+            Already have an account?{' '}
+            <Link href="/signin" className="font-semibold text-emerald-600 hover:underline">
+              Sign in
+            </Link>
+          </p>
         </div>
-      )}
 
-      <p className="mt-6 text-sm text-center text-gray-600 dark:text-gray-400">
-        Already have an account?{' '}
-        <a href="/signin" className="text-blue-600 hover:underline dark:text-blue-400">
-          Sign In
-        </a>
-      </p>
+        <div className="rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 text-white">
+          <h2 className="text-xl font-semibold">Premium onboarding</h2>
+          <p className="mt-3 text-sm text-emerald-100">
+            Get instant access to enterprise tools and premium support.
+          </p>
+          <ul className="mt-6 space-y-3 text-sm">
+            <li>Unified procurement dashboard</li>
+            <li>Secure payments and wallet</li>
+            <li>Dedicated expert assistance</li>
+          </ul>
+        </div>
+      </div>
     </main>
   );
 }
