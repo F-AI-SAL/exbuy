@@ -1,147 +1,111 @@
 'use client';
+
 import Link from 'next/link';
-import Image from 'next/image';
-import { RectangleStackIcon, HeartIcon, WalletIcon, TicketIcon } from '@heroicons/react/24/outline';
+import {
+  ClipboardDocumentCheckIcon,
+  ExclamationTriangleIcon,
+  HeartIcon,
+  TicketIcon,
+  WalletIcon,
+  BanknotesIcon,
+  TruckIcon,
+  CheckCircleIcon,
+  ClockIcon,
+} from '@heroicons/react/24/outline';
 
 export default function DashboardPage() {
   const overviewItems = [
-    {
-      label: 'Request For Quotation',
-      href: '/rfq',
-      icon: RectangleStackIcon,
-      count: 3,
-    },
-    {
-      label: 'Action Needed',
-      href: '/actions',
-      icon: RectangleStackIcon,
-      count: 2,
-    },
-    { label: 'My Wallet', href: '/wallet', icon: WalletIcon, count: 0 },
-    { label: 'Wishlist', href: '/wishlist', icon: HeartIcon, count: 5 },
-    { label: 'My Coupons', href: '/coupons', icon: TicketIcon, count: 1 },
+    { label: 'Request For Quotation', href: '/rfq', icon: ClipboardDocumentCheckIcon },
+    { label: 'Action Needed', href: '/actions', icon: ExclamationTriangleIcon },
+    { label: 'My Wallet', href: '/wallet', icon: WalletIcon },
+    { label: 'Wishlist', href: '/wishlist', icon: HeartIcon },
+    { label: 'My Coupons', href: '/coupons', icon: TicketIcon },
   ];
 
   const buyShipOrders = [
-    { label: 'To Pay', count: 5 },
-    { label: 'Ready to Shipping', count: 0 },
-    { label: 'Ready to Delivery', count: 4 },
-    { label: 'Completed', count: 6 },
+    { label: 'To Pay', count: 5, icon: BanknotesIcon, color: 'bg-rose-100 text-rose-600' },
+    { label: 'Ready to Shipping', count: 0, icon: TruckIcon, color: 'bg-sky-100 text-sky-600' },
+    { label: 'Ready to Delivery', count: 4, icon: TruckIcon, color: 'bg-emerald-100 text-emerald-600' },
+    { label: 'Completed', count: 6, icon: CheckCircleIcon, color: 'bg-green-100 text-green-600' },
   ];
 
   const shipForMeOrders = [
-    { label: 'To Be Confirmed', count: 0 },
-    { label: 'Ready to Shipping', count: 0 },
-    { label: 'Ready to Delivery', count: 0 },
-    { label: 'Completed', count: 0 },
+    { label: 'To Be Confirmed', count: 0, icon: ClockIcon, color: 'bg-amber-100 text-amber-600' },
+    { label: 'Ready to Shipping', count: 0, icon: TruckIcon, color: 'bg-sky-100 text-sky-600' },
+    { label: 'Ready to Delivery', count: 0, icon: TruckIcon, color: 'bg-indigo-100 text-indigo-600' },
+    { label: 'Completed', count: 0, icon: CheckCircleIcon, color: 'bg-green-100 text-green-600' },
   ];
 
   return (
-    <main className="max-w-7xl mx-auto px-6 py-12 bg-gradient-to-br from-white via-blue-50 to-blue-100 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 rounded-2xl shadow-xl">
-      {/* Logo + Title */}
-      <div className="flex items-center gap-3 mb-10 border-b pb-4 dark:border-zinc-700">
-        <Image
-          src="/exbuy-logo.png"
-          alt="ExBuy Logo"
-          width={48}
-          height={48}
-          className="h-12 w-12 object-contain rounded-md shadow-sm bg-gray-50 dark:bg-zinc-800 p-1"
-        />
-        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white">My Dashboard</h1>
-      </div>
-
-      {/* Overview Section */}
-      <section className="mb-12">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">Overview</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+    <main className="mx-auto max-w-7xl space-y-10 px-6 py-10">
+      <section>
+        <h1 className="text-lg font-semibold text-zinc-900">Overview</h1>
+        <div className="mt-5 grid grid-cols-2 gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-3 lg:grid-cols-5">
           {overviewItems.map((item) => (
             <Link
               key={item.label}
               href={item.href}
-              className="relative flex flex-col items-center gap-3 rounded-xl border bg-white dark:bg-zinc-900 dark:border-zinc-700 p-6 text-center shadow-md hover:shadow-lg transition hover:scale-105"
+              className="flex flex-col items-center gap-3 rounded-xl p-4 text-center transition hover:bg-zinc-50"
             >
-              {/* Icon + Badge */}
-              <div className="relative">
-                <item.icon className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                {item.count > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
-                    {item.count}
-                  </span>
-                )}
-              </div>
-              <div className="text-sm font-semibold text-gray-700 dark:text-white">
-                {item.label}
-              </div>
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 text-zinc-700">
+                <item.icon className="h-6 w-6" />
+              </span>
+              <span className="text-sm font-semibold text-zinc-800">{item.label}</span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Buy & Ship Orders */}
-      <section className="mb-12">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">
-          Buy and Ship for Me Orders
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <section>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-zinc-900">Buy and Ship for me Orders</h2>
+          <Link href="/orders" className="text-sm font-semibold text-zinc-500 hover:text-emerald-600">
+            View All Orders
+          </Link>
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {buyShipOrders.map((item) => (
-            <div
-              key={item.label}
-              className="relative rounded-xl border bg-white dark:bg-zinc-900 dark:border-zinc-700 p-6 text-center shadow-md hover:shadow-lg transition"
-            >
-              <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">{item.label}</div>
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                {item.count}
-              </div>
-              {item.count > 0 && (
-                <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
-                  {item.count}
+            <div key={item.label} className="rounded-2xl bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.color}`}>
+                  <item.icon className="h-6 w-6" />
                 </span>
-              )}
+                <span className="text-3xl font-semibold text-zinc-800">
+                  {String(item.count).padStart(2, '0')}
+                </span>
+              </div>
+              <p className="mt-4 text-sm font-semibold text-zinc-700">{item.label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Ship for Me Orders */}
-      <section className="mb-12">
-        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">
-          Ship for Me Orders
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      <section>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-zinc-900">Ship for me Orders</h2>
+          <Link
+            href="/shipments"
+            className="text-sm font-semibold text-zinc-500 hover:text-emerald-600"
+          >
+            View All Shipment Orders
+          </Link>
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {shipForMeOrders.map((item) => (
-            <div
-              key={item.label}
-              className="relative rounded-xl border bg-white dark:bg-zinc-900 dark:border-zinc-700 p-6 text-center shadow-md hover:shadow-lg transition"
-            >
-              <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">{item.label}</div>
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                {item.count}
-              </div>
-              {item.count > 0 && (
-                <span className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">
-                  {item.count}
+            <div key={item.label} className="rounded-2xl bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ${item.color}`}>
+                  <item.icon className="h-6 w-6" />
                 </span>
-              )}
+                <span className="text-3xl font-semibold text-zinc-300">
+                  {String(item.count).padStart(2, '0')}
+                </span>
+              </div>
+              <p className="mt-4 text-sm font-semibold text-zinc-700">{item.label}</p>
             </div>
           ))}
         </div>
       </section>
-
-      {/* View All Links */}
-      <div className="flex justify-end gap-6 mt-8">
-        <Link
-          href="/orders"
-          className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400"
-        >
-          View All Orders
-        </Link>
-        <Link
-          href="/shipments"
-          className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400"
-        >
-          View All Shipment Orders
-        </Link>
-      </div>
     </main>
   );
 }
