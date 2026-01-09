@@ -1,24 +1,57 @@
-# ezbuy_core/views.py
-from django.http import JsonResponse
+# exbuy_core/views.py
 from django.contrib.auth.decorators import login_required
-from merchants.models import Merchant
-from orders.models import Order
+from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
-@require_GET 
-def popular_products(request): 
-    return JsonResponse({"results": [
-         {"id": 1, "name": "Smartwatch", "price": "3.75", "image": "/static/demo/watch.jpg"}, {"id": 2, "name": "Smart Glasses", "price": "44.9", "image": "/static/demo/glasses.jpg"},
-         ]})
-    
-@require_GET 
+from merchants.models import Merchant
+from orders.models import Order
+
+
+@require_GET
+def popular_products(request):
+    """Return demo popular products for the home page."""
+    return JsonResponse({
+        "results": [
+            {
+                "id": 1,
+                "name": "Smartwatch",
+                "price": "3.75",
+                "image": "/static/demo/watch.jpg",
+            },
+            {
+                "id": 2,
+                "name": "Smart Glasses",
+                "price": "44.9",
+                "image": "/static/demo/glasses.jpg",
+            },
+        ]
+    })
+
+
+@require_GET
 def analyst_choice(request):
-    return JsonResponse({"results":
-        [ {"id": 3, "name": "Perfume Bottle", "price": "0.1", "image": "/static/demo/perfume.jpg"}, {"id": 4, "name": "CeraVe Skincare", "price": "2.0", "image": "/static/demo/cerave.jpg"},
-    ]})
+    """Return demo analyst choice products for the home page."""
+    return JsonResponse({
+        "results": [
+            {
+                "id": 3,
+                "name": "Perfume Bottle",
+                "price": "0.1",
+                "image": "/static/demo/perfume.jpg",
+            },
+            {
+                "id": 4,
+                "name": "CeraVe Skincare",
+                "price": "2.0",
+                "image": "/static/demo/cerave.jpg",
+            },
+        ]
+    })
+
 
 @login_required
 def home(request):
+    """Return dashboard data based on the authenticated user's role."""
     role = getattr(request.user, "role", "guest")
     stats = {
         "merchants": Merchant.objects.count(),
@@ -53,6 +86,6 @@ def home(request):
             {"icon": "grid", "title": "All Categories", "link": "/categories"},
             {"icon": "quote", "title": "Request for Quotation", "link": "/rfq"},
             {"icon": "show", "title": "Trade Shows", "link": "/shows"},
-            {"icon": "star", "title": "Analyst’s Choice", "link": "/analyst"},
+            {"icon": "star", "title": "Analyst's Choice", "link": "/analyst"},
         ],
     })

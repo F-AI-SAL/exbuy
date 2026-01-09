@@ -1,4 +1,4 @@
-"""
+﻿"""
 URL configuration for exbuy_core project.
 """
 
@@ -15,15 +15,16 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-# ✅ Simple health check / root endpoint
+# âœ… Simple health check / root endpoint
 def home(request):
+    """Return a simple health check payload."""
     return JsonResponse({
         "message": "Welcome to Exbuy API",
         "status": "running",
         "version": "1.0.0"
     })
 
-# ✅ Import your custom product views
+# âœ… Import your custom product views
 from .views import popular_products, analyst_choice
 
 urlpatterns = [
@@ -43,11 +44,11 @@ urlpatterns = [
     path("api/billing/", include("billing.urls")),
     path("api/tracking/", include("tracking.urls")),
 
-    # ✅ JWT Authentication endpoints
+    # âœ… JWT Authentication endpoints
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
-    # ✅ API schema & docs
+    # âœ… API schema & docs
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
