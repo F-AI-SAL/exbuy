@@ -1,17 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
-  XMarkIcon,
   Bars3Icon,
-  MagnifyingGlassIcon,
-  ShoppingCartIcon,
-  HeartIcon,
   BellIcon,
+  ChevronDownIcon,
+  HeartIcon,
+  ShoppingCartIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import Image from 'next/image';
-import { logout } from '@/utils/logout'; // ✅ Import logout helper
+import SearchBar from './header/SearchBar';
+import { logout } from '@/utils/logout';
 
 interface MenuItem {
   name: string;
@@ -25,23 +26,36 @@ const menuItems: MenuItem[] = [
   { name: 'Shipping', href: '/shipping' },
 ];
 
+const services: MenuItem[] = [
+  { name: 'Ship for Me', href: '/services/ship' },
+  { name: 'Cost Calculator', href: '/calculator' },
+  { name: 'ExBuy Lens', href: '/lens' },
+  { name: 'ExBuy Live', href: '/live' },
+];
+
+const categoryItems: MenuItem[] = [
+  { name: 'Fashion', href: '/categories' },
+  { name: 'Home & Lifestyle', href: '/categories' },
+  { name: 'Electronics', href: '/categories' },
+  { name: 'Sports & Outdoors', href: '/categories' },
+];
+
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
 
-  // Example counts (later connect with store/state)
   const cartCount = 3;
   const wishlistCount = 5;
   const notificationsCount = 2;
 
-  // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setMenuOpen(false);
-        setSearchOpen(false);
         setAvatarOpen(false);
+        setServicesOpen(false);
       }
     };
     document.addEventListener('keydown', onKey);
@@ -49,133 +63,156 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black shadow-sm">
-      {/* Gradient strip */}
-      <div className="h-1 w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600" />
+    <header className="w-full border-b border-zinc-200 bg-white shadow-sm">
+      <div className="h-1 w-full bg-gradient-to-r from-emerald-500 via-green-500 to-lime-500" />
 
-      <div className="px-6 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <span className="text-xl font-bold text-black dark:text-white tracking-wide">ExBuy</span>
+      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
+        <div className="flex items-center gap-3">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600">
+              <Image
+                src="/exbuy-logo.png"
+                alt="ExBuy"
+                width={32}
+                height={32}
+                className="h-8 w-8"
+              />
+            </span>
+            <span className="text-lg font-extrabold tracking-tight text-zinc-900">ExBuy</span>
+          </Link>
+
+          <div className="relative hidden md:block">
+            <button
+              type="button"
+              onClick={() => setCategoriesOpen((open) => !open)}
+              className="flex items-center gap-1 rounded-full border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700 hover:border-emerald-500 hover:text-emerald-700"
+              aria-label="Categories"
+              aria-expanded={categoriesOpen}
+              aria-controls="categories-menu"
+            >
+              Categories
+              <ChevronDownIcon className="h-4 w-4" />
+            </button>
+            {categoriesOpen && (
+              <div
+                id="categories-menu"
+                className="absolute left-0 top-12 z-30 w-60 rounded-xl border border-zinc-200 bg-white p-2 shadow-lg"
+                role="menu"
+              >
+                {categoryItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="block rounded-lg px-3 py-2 text-sm text-zinc-700 hover:bg-emerald-50"
+                    role="menuitem"
+                    onClick={() => setCategoriesOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Desktop Menu */}
-        <nav
-          className="hidden md:flex gap-6 text-sm font-medium text-zinc-700 dark:text-zinc-300"
-          aria-label="Main navigation"
-        >
-          {menuItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+        <div className="hidden flex-1 items-center justify-center lg:flex">
+          <SearchBar />
+        </div>
+
+        <div className="flex items-center gap-3">
+          <div className="relative hidden md:block">
+            <button
+              type="button"
+              onClick={() => setServicesOpen((open) => !open)}
+              className="flex items-center gap-1 rounded-full border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700 hover:border-emerald-500 hover:text-emerald-700"
+              aria-expanded={servicesOpen}
+              aria-controls="services-menu"
             >
-              {item.name}
-            </Link>
-          ))}
-        </nav>
+              Services
+              <ChevronDownIcon className="h-4 w-4" />
+            </button>
 
-        {/* Right side actions */}
-        <div className="flex items-center gap-4">
-          {/* Search button */}
-          <button
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label="Search"
-            aria-controls="search-overlay"
-            aria-expanded={searchOpen}
-          >
-            <MagnifyingGlassIcon className="h-6 w-6 text-black dark:text-white" />
-          </button>
+            {servicesOpen && (
+              <div
+                id="services-menu"
+                className="absolute right-0 mt-2 w-48 rounded-xl border border-zinc-200 bg-white p-2 shadow-lg"
+                role="menu"
+              >
+                {services.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="block rounded-lg px-3 py-2 text-sm text-zinc-700 hover:bg-emerald-50"
+                    role="menuitem"
+                    onClick={() => setServicesOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
 
-          {/* Wishlist */}
-          <Link
-            href="/wishlist"
-            className="relative p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label="Wishlist"
-          >
-            <HeartIcon className="h-6 w-6 text-black dark:text-white" />
+          <Link href="/wishlist" className="relative rounded-full p-2" aria-label="Wishlist">
+            <HeartIcon className="h-6 w-6 text-zinc-800" />
             {wishlistCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-pink-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
+              <span className="absolute -right-1 -top-1 rounded-full bg-pink-600 px-1.5 py-0.5 text-xs font-bold text-white">
                 {wishlistCount}
               </span>
             )}
           </Link>
 
-          {/* Notifications */}
           <Link
             href="/notifications"
-            className="relative p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="relative rounded-full p-2"
             aria-label="Notifications"
           >
-            <BellIcon className="h-6 w-6 text-black dark:text-white" />
+            <BellIcon className="h-6 w-6 text-zinc-800" />
             {notificationsCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
+              <span className="absolute -right-1 -top-1 rounded-full bg-amber-500 px-1.5 py-0.5 text-xs font-bold text-white">
                 {notificationsCount}
               </span>
             )}
           </Link>
 
-          {/* Cart */}
-          <Link
-            href="/cart"
-            className="relative p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            aria-label="Cart"
-          >
-            <ShoppingCartIcon className="h-6 w-6 text-black dark:text-white" />
+          <Link href="/cart" className="relative rounded-full p-2" aria-label="Cart">
+            <ShoppingCartIcon className="h-6 w-6 text-zinc-800" />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full px-1.5 py-0.5">
+              <span className="absolute -right-1 -top-1 rounded-full bg-emerald-600 px-1.5 py-0.5 text-xs font-bold text-white">
                 {cartCount}
               </span>
             )}
           </Link>
 
-          {/* Account avatar */}
           <div className="relative">
             <button
               onClick={() => setAvatarOpen(!avatarOpen)}
-              className="focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-zinc-100 text-sm font-semibold text-zinc-700"
               aria-label="Account menu"
               aria-controls="account-menu"
               aria-expanded={avatarOpen}
             >
-              <Image
-                src="/avatar.png"
-                alt="Account"
-                width={32}
-                height={32}
-                className="rounded-full border border-zinc-300 dark:border-zinc-700"
-              />
+              U
             </button>
 
             {avatarOpen && (
               <div
                 id="account-menu"
-                className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-900 shadow-lg rounded-lg py-2 z-50"
+                className="absolute right-0 mt-2 w-48 rounded-xl border border-zinc-200 bg-white p-2 shadow-lg"
                 role="menu"
               >
-                <Link
-                  href="/account"
-                  className="block px-4 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                >
+                <Link href="/account" className="block rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">
                   Profile
                 </Link>
-                <Link
-                  href="/orders"
-                  className="block px-4 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                >
+                <Link href="/orders" className="block rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">
                   Orders
                 </Link>
-                <Link
-                  href="/settings"
-                  className="block px-4 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                >
+                <Link href="/settings" className="block rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">
                   Settings
                 </Link>
-                {/* ✅ Logout button now calls helper */}
                 <button
                   onClick={logout}
-                  className="w-full text-left px-4 py-2 text-sm hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="block w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-zinc-100"
                 >
                   Logout
                 </button>
@@ -183,83 +220,78 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Hamburger */}
           <button
-            className="md:hidden text-black dark:text-white p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="md:hidden rounded-full p-2"
             onClick={() => setMenuOpen(true)}
             aria-label="Open menu"
             aria-controls="mobile-menu"
             aria-expanded={menuOpen}
           >
-            <Bars3Icon className="h-6 w-6" />
+            <Bars3Icon className="h-6 w-6 text-zinc-800" />
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      <div className="px-4 pb-3 lg:hidden">
+        <SearchBar />
+      </div>
+
       {menuOpen && (
         <div id="mobile-menu" className="fixed inset-0 z-40 md:hidden">
-          {/* Overlay */}
-          <div
-            className="absolute inset-0 bg-black bg-opacity-50"
-            onClick={() => setMenuOpen(false)}
-          ></div>
+          <div className="absolute inset-0 bg-black/40" onClick={() => setMenuOpen(false)} />
 
-          {/* Drawer */}
-          <div className="absolute top-0 right-0 w-2/3 h-full bg-white dark:bg-zinc-900 shadow-xl p-6 transform transition-transform duration-300">
-            {/* Close button */}
-            <div className="flex justify-between items-center mb-6">
-              <span className="text-lg font-semibold text-black dark:text-white">Menu</span>
+          <div className="absolute right-0 top-0 h-full w-2/3 bg-white p-6 shadow-xl">
+            <div className="mb-6 flex items-center justify-between">
+              <span className="text-lg font-semibold text-zinc-900">Menu</span>
               <button
                 onClick={() => setMenuOpen(false)}
-                className="p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="rounded-full p-2"
                 aria-label="Close menu"
               >
-                <XMarkIcon className="h-6 w-6 text-black dark:text-white" />
+                <XMarkIcon className="h-6 w-6 text-zinc-800" />
               </button>
             </div>
 
-            {/* Menu items */}
-            <nav className="flex flex-col gap-4 text-sm font-medium text-black dark:text-white">
+            <nav className="flex flex-col gap-4 text-sm font-medium text-zinc-800">
               {menuItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                  className="hover:text-emerald-600"
                 >
                   {item.name}
                 </Link>
               ))}
-              <Link
-                href="/wishlist"
-                onClick={() => setMenuOpen(false)}
-                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-              >
+              <Link href="/wishlist" onClick={() => setMenuOpen(false)} className="hover:text-emerald-600">
                 Wishlist
               </Link>
               <Link
                 href="/notifications"
                 onClick={() => setMenuOpen(false)}
-                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                className="hover:text-emerald-600"
               >
                 Notifications
               </Link>
-              <Link
-                href="/cart"
-                onClick={() => setMenuOpen(false)}
-                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
-              >
+              <Link href="/cart" onClick={() => setMenuOpen(false)} className="hover:text-emerald-600">
                 Cart
               </Link>
               <Link
                 href="/account"
                 onClick={() => setMenuOpen(false)}
-                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                className="hover:text-emerald-600"
               >
                 Account
               </Link>
-              {/* ✅ Logout option in mobile menu */} <button onClick={() => { setMenuOpen(false); logout(); }} className="text-left hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200" > Logout </button>
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  logout();
+                }}
+                className="text-left hover:text-emerald-600"
+              >
+                Logout
+              </button>
             </nav>
           </div>
         </div>

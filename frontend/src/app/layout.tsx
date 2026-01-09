@@ -1,16 +1,22 @@
 // frontend/src/app/layout.tsx
 import './globals.css';
 import type { Metadata } from 'next';
-import Navbar from '@/components/Navbar'; // ✅ Use Navbar instead of Header
+import { Manrope } from 'next/font/google';
+import Navbar from '@/components/Navbar';
 
-// Enterprise‑grade metadata
+const manrope = Manrope({
+  subsets: ['latin'],
+  variable: '--font-manrope',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: {
-    default: 'ExBuy — Enterprise Commerce',
+    default: 'ExBuy Enterprise Commerce',
     template: '%s | ExBuy',
   },
   description:
-    'ExBuy is a next‑generation enterprise commerce platform with premium UX and scalable workflows.',
+    'ExBuy is a next-generation enterprise commerce platform with premium UX and scalable workflows.',
   icons: {
     icon: '/favicon.ico',
   },
@@ -23,20 +29,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="min-h-screen flex flex-col bg-gray-50 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 font-sans antialiased">
-        {/* ✅ Sticky Navbar */}
+      <body
+        className={`${manrope.variable} min-h-screen flex flex-col bg-gray-50 text-zinc-900 font-sans antialiased`}
+      >
         <header className="sticky top-0 z-50 shadow-md">
           <Navbar />
         </header>
 
-        {/* ✅ Main content responsive container */}
         <main className="flex-1 container mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {children}
         </main>
 
-        {/* ✅ Enterprise Footer */}
-        <footer className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-black py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
-          © {new Date().getFullYear()} ExBuy — All rights reserved.
+        <footer className="border-t border-zinc-200 bg-white py-6 text-center text-sm text-zinc-500">
+          (c) {new Date().getFullYear()} ExBuy. All rights reserved.
         </footer>
       </body>
     </html>

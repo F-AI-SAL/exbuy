@@ -2,7 +2,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { FaSearch, FaCamera, FaClock } from 'react-icons/fa';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import Image from 'next/image'; // ✅ Next.js Image import
+import Image from 'next/image';
 
 type ImagePreview = {
   file: File;
@@ -18,7 +18,6 @@ export default function SearchBar() {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Debounced fetch suggestions
   useEffect(() => {
     if (!q.trim()) {
       setSuggestions([]);
@@ -47,7 +46,6 @@ export default function SearchBar() {
   const handleSearch = (query?: string) => {
     const finalQuery = query ?? q;
     if (finalQuery.trim()) {
-      // Save to history (max 5 items)
       setHistory((prev) => {
         const updated = [finalQuery, ...prev.filter((h) => h !== finalQuery)];
         return updated.slice(0, 5);
@@ -69,10 +67,9 @@ export default function SearchBar() {
 
   return (
     <div className="group relative w-full max-w-2xl">
-      <div className="flex items-center border rounded-full overflow-hidden shadow-sm focus-within:ring-2 focus-within:ring-blue-500 transition">
-        {/* Dropdown for category */}
+      <div className="flex items-center overflow-hidden rounded-full border border-zinc-200 bg-white shadow-sm focus-within:ring-2 focus-within:ring-emerald-500">
         <select
-          className="px-3 py-2 bg-gray-50 dark:bg-zinc-800 border-r text-sm focus:outline-none rounded-l-full"
+          className="bg-zinc-50 px-3 py-2 text-sm focus:outline-none"
           defaultValue="all"
         >
           <option value="all">All</option>
@@ -82,35 +79,31 @@ export default function SearchBar() {
           <option value="grocery">Grocery</option>
         </select>
 
-        {/* Text input */}
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Search products…"
-          className="flex-1 px-3 py-2 bg-transparent focus:outline-none text-gray-800 dark:text-gray-200 placeholder-gray-500 dark:placeholder-gray-400"
+          placeholder="Search products"
+          className="flex-1 bg-transparent px-3 py-2 text-sm text-zinc-800 placeholder:text-zinc-400 focus:outline-none"
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
 
-        {/* Camera button */}
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="px-3 py-2 border-l bg-white dark:bg-zinc-900 hover:bg-gray-50 dark:hover:bg-zinc-800 transition"
+          className="border-l border-zinc-200 px-3 py-2 text-zinc-500 hover:text-emerald-600"
           title="Search by camera"
         >
-          <FaCamera className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+          <FaCamera className="h-5 w-5" />
         </button>
 
-        {/* Search button */}
         <button
           type="button"
           onClick={() => handleSearch()}
-          className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-medium hover:from-green-700 hover:to-emerald-700 transition"
+          className="bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700"
         >
           <FaSearch className="h-5 w-5" />
         </button>
 
-        {/* Hidden file input */}
         <input
           ref={fileRef}
           type="file"
@@ -124,21 +117,20 @@ export default function SearchBar() {
         />
       </div>
 
-      {/* Suggestions dropdown */}
       {suggestions.length > 0 && (
         <ul
-          className="absolute left-0 right-0 mt-2 rounded-lg border bg-white dark:bg-zinc-900 shadow-lg max-h-60 overflow-auto z-30"
+          className="absolute left-0 right-0 z-30 mt-2 max-h-60 overflow-auto rounded-lg border border-zinc-200 bg-white shadow-lg"
           role="listbox"
         >
-          {loading && <li className="px-3 py-2 text-sm text-gray-500">Loading…</li>}
+          {loading && <li className="px-3 py-2 text-sm text-zinc-500">Loading...</li>}
           {suggestions.map((s) => (
             <li key={s}>
               <button
                 type="button"
                 onClick={() => handleSearch(s)}
-                className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-800 focus:bg-gray-100 dark:focus:bg-zinc-800 focus:outline-none transition"
+                className="w-full px-3 py-2 text-left text-sm hover:bg-zinc-100"
                 role="option"
-                aria-selected={false} // ✅ ARIA fix
+                aria-selected={false}
               >
                 {s}
               </button>
@@ -147,10 +139,9 @@ export default function SearchBar() {
         </ul>
       )}
 
-      {/* Recent search history dropdown */}
       {history.length > 0 && !q && (
         <ul
-          className="absolute left-0 right-0 mt-2 rounded-lg border bg-white dark:bg-zinc-900 shadow-lg max-h-40 overflow-auto z-20"
+          className="absolute left-0 right-0 z-20 mt-2 max-h-40 overflow-auto rounded-lg border border-zinc-200 bg-white shadow-lg"
           role="listbox"
         >
           {history.map((h) => (
@@ -158,11 +149,11 @@ export default function SearchBar() {
               <button
                 type="button"
                 onClick={() => handleSearch(h)}
-                className="w-full flex items-center gap-2 text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-zinc-100"
                 role="option"
-                aria-selected={false} // ✅ ARIA fix
+                aria-selected={false}
               >
-                <FaClock className="h-4 w-4 text-gray-400" />
+                <FaClock className="h-4 w-4 text-zinc-400" />
                 {h}
               </button>
             </li>
@@ -170,11 +161,9 @@ export default function SearchBar() {
         </ul>
       )}
 
-      {/* Image preview */}
       {img && (
-        <div className="absolute left-0 right-0 mt-2 rounded-lg border bg-white dark:bg-zinc-900 p-3 shadow-lg">
+        <div className="absolute left-0 right-0 mt-2 rounded-lg border border-zinc-200 bg-white p-3 shadow-lg">
           <div className="flex items-center gap-3">
-            {/* ✅ Next.js Image instead of <img> */}
             <Image
               src={img.url}
               alt="Selected image"
@@ -182,18 +171,18 @@ export default function SearchBar() {
               height={48}
               className="rounded object-cover"
             />
-            <div className="flex-1 text-sm text-gray-700 dark:text-gray-300">
-              Image selected. You can clear or use it for search.
+            <div className="flex-1 text-sm text-zinc-600">
+              Image selected. You can clear it or use it for search.
             </div>
             <div className="flex items-center gap-2">
               <button
-                className="px-2 py-1 rounded border hover:bg-gray-50 dark:hover:bg-zinc-800 transition"
+                className="rounded border border-zinc-200 px-2 py-1 hover:bg-zinc-50"
                 onClick={handleImageClear}
               >
                 <XMarkIcon className="h-4 w-4" />
               </button>
               <button
-                className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition text-sm font-medium"
+                className="rounded bg-emerald-600 px-3 py-1 text-sm font-medium text-white hover:bg-emerald-700"
                 onClick={async () => {
                   const form = new FormData();
                   form.append('image', img.file);
