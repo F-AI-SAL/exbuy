@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { api } from '@/lib/api';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 
@@ -38,42 +39,7 @@ export default function BannerCarousel() {
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
 
-  useEffect(() => {
-    api('/').then((d) => {
-      setBanners(d.banners || []);
-      setLoading(false);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (!banners.length) return;
-    startAutoplay();
-    return () => stopAutoplay();
-  }, [banners, activeIndex]);
-
-  const startAutoplay = () => {
-    stopAutoplay();
-    autoplayRef.current = setInterval(() => {
-      handleNext();
-    }, 5000);
-  };
-
-  const stopAutoplay = () => {
-    if (autoplayRef.current) clearInterval(autoplayRef.current);
-  };
-
-  const handlePrev = () => {
-    const newIndex = activeIndex === 0 ? banners.length - 1 : activeIndex - 1;
-    setActiveIndex(newIndex);
-    scrollToIndex(newIndex);
-  };
-
-  const handleNext = () => {
-    const newIndex = activeIndex === banners.length - 1 ? 0 : activeIndex + 1;
-    setActiveIndex(newIndex);
-    scrollToIndex(newIndex);
-  };
-
+  // helper functions
   const scrollToIndex = (index: number) => {
     if (containerRef.current) {
       const cardWidth = containerRef.current.clientWidth;
@@ -84,6 +50,22 @@ export default function BannerCarousel() {
     }
   };
 
+  const stopAutoplay = () => {
+    if (autoplayRef.current) clearInterval(autoplayRef.current);
+  };
+
+  // ✅ autoplay logic inline (no handleNext dependency)
+  useEffect(() => {
+    if (!banners.length) return;
+    stopAutoplay();
+    autoplayRef.current = setInterval(() => {
+      const newIndex = activeIndex === banners.length - 1 ? 0 : activeIndex + 1;
+      setActiveIndex(newIndex);
+      scrollToIndex(newIndex);
+    }, 5000);
+    return () => stopAutoplay();
+  }, [banners, activeIndex]);
+
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
@@ -93,9 +75,24 @@ export default function BannerCarousel() {
   const handleTouchEnd = () => {
     const deltaX = touchStartX.current - touchEndX.current;
     if (Math.abs(deltaX) > 50) {
-      deltaX > 0 ? handleNext() : handlePrev();
+      if (deltaX > 0) {
+        const newIndex = activeIndex === banners.length - 1 ? 0 : activeIndex + 1;
+        setActiveIndex(newIndex);
+        scrollToIndex(newIndex);
+      } else {
+        const newIndex = activeIndex === 0 ? banners.length - 1 : activeIndex - 1;
+        setActiveIndex(newIndex);
+        scrollToIndex(newIndex);
+      }
     }
   };
+
+  useEffect(() => {
+    api('/').then((d) => {
+      setBanners(d.banners || []);
+      setLoading(false);
+    });
+  }, []);
 
   if (loading) {
     return (
@@ -123,11 +120,26 @@ export default function BannerCarousel() {
         aria-roledescription="carousel"
         aria-label="Promotional banners"
         onMouseEnter={stopAutoplay}
-        onMouseLeave={startAutoplay}
+        onMouseLeave={() => {
+          stopAutoplay();
+          autoplayRef.current = setInterval(() => {
+            const newIndex = activeIndex === banners.length - 1 ? 0 : activeIndex + 1;
+            setActiveIndex(newIndex);
+            scrollToIndex(newIndex);
+          }, 5000);
+        }}
         tabIndex={0}
         onKeyDown={(e) => {
-          if (e.key === 'ArrowLeft') handlePrev();
-          if (e.key === 'ArrowRight') handleNext();
+          if (e.key === 'ArrowLeft') {
+            const newIndex = activeIndex === 0 ? banners.length - 1 : activeIndex - 1;
+            setActiveIndex(newIndex);
+            scrollToIndex(newIndex);
+          }
+          if (e.key === 'ArrowRight') {
+            const newIndex = activeIndex === banners.length - 1 ? 0 : activeIndex + 1;
+            setActiveIndex(newIndex);
+            scrollToIndex(newIndex);
+          }
         }}
       >
         <div
@@ -162,10 +174,12 @@ export default function BannerCarousel() {
                 {b.products && (
                   <div className="grid grid-cols-3 gap-4 flex-1">
                     {b.products.map((p, idx) => (
-                      <img
+                      <Image
                         key={idx}
                         src={p.src}
                         alt={p.alt}
+                        width={128}
+                        height={128}
                         loading="lazy"
                         className="h-32 w-full object-cover rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
                       />
@@ -177,16 +191,24 @@ export default function BannerCarousel() {
           ))}
         </div>
 
-        {/* Arrows */}
+                {/* Arrows */}
         <button
-          onClick={handlePrev}
+          onClick={() => {
+            const newIndex = activeIndex === 0 ? banners.length - 1 : activeIndex - 1;
+            setActiveIndex(newIndex);
+            scrollToIndex(newIndex);
+          }}
           className="absolute top-1/2 left-3 -translate-y-1/2 p-3 rounded-full bg-white/80 dark:bg-zinc-800 shadow-lg hover:bg-white dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600"
           aria-label="Previous banner"
         >
           <ChevronLeftIcon className="h-6 w-6 text-gray-800 dark:text-white" />
         </button>
         <button
-          onClick={handleNext}
+          onClick={() => {
+            const newIndex = activeIndex === banners.length - 1 ? 0 : activeIndex + 1;
+            setActiveIndex(newIndex);
+            scrollToIndex(newIndex);
+          }}
           className="absolute top-1/2 right-3 -translate-y-1/2 p-3 rounded-full bg-white/80 dark:bg-zinc-800 shadow-lg hover:bg-white dark:hover:bg-zinc-700 transition focus:outline-none focus:ring-2 focus:ring-blue-600"
           aria-label="Next banner"
         >
@@ -221,9 +243,11 @@ export default function BannerCarousel() {
             href={cat.href}
             className="flex flex-col items-center justify-center p-4 rounded-xl bg-white dark:bg-zinc-800 shadow hover:shadow-lg transition group"
           >
-            <img
+            <Image
               src={cat.icon}
               alt={cat.name}
+              width={40}
+              height={40}
               className="h-10 w-10 mb-2 group-hover:scale-110 transition-transform"
             />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-200 group-hover:text-blue-600 dark:group-hover:text-blue-400">
@@ -241,12 +265,16 @@ export default function BannerCarousel() {
             href={item.href}
             className="flex flex-col items-center justify-center p-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow hover:shadow-xl transition group"
           >
-            <img
+            <Image
               src={item.icon}
               alt={item.name}
+              width={40}
+              height={40}
               className="h-10 w-10 mb-2 group-hover:scale-110 transition-transform"
             />
-            <span className="text-sm font-semibold group-hover:text-yellow-300">{item.name}</span>
+            <span className="text-sm font-semibold group-hover:text-yellow-300">
+              {item.name}
+            </span>
           </Link>
         ))}
       </div>
