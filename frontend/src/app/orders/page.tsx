@@ -111,8 +111,8 @@ export default function OrdersPage() {
           <section className="space-y-6">
             <div className="rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 p-4 text-white shadow-sm">
               <div className="flex items-center justify-between">
-                <p className="text-lg font-semibold italic">
-                  Turn Shopping Experience Into Dropshipping with MoveDrop
+              <p className="text-lg font-semibold italic">
+                  Turn Shopping Experience Into Dropshipping with ExBuyDrop
                 </p>
                 <button className="rounded-full bg-white/10 p-1">
                   <XMarkIcon className="h-4 w-4" />
@@ -122,7 +122,7 @@ export default function OrdersPage() {
 
             <div className="rounded-2xl bg-emerald-50 p-3 text-sm text-emerald-900">
               Dont worry, your order history is safe! Find all your previous orders at
-              https://legacy.moveon.com.bd/
+              https://legacy.exbuy.com.bd/
             </div>
 
             <div>
