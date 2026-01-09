@@ -1,4 +1,3 @@
-// frontend/src/app/api/categories/suggestions/route.ts
 // Enterprise‑grade Suggestions API route with fuzzy search + ranking + real-time popularity tracking.
 // GET    → return product/category suggestions
 // POST   → track events (click/sale) and auto-increment popularity
@@ -6,6 +5,13 @@
 import { NextResponse } from 'next/server';
 import connectDB from '../../../../lib/mongodb';
 import { Db, ObjectId } from 'mongodb';
+
+// Product interface for type safety
+interface Product {
+  _id: ObjectId;
+  name: string;
+  popularity?: number;
+}
 
 // Utility: Levenshtein distance (edit distance)
 function levenshtein(a: string, b: string): number {
@@ -58,15 +64,15 @@ export async function GET(req: Request) {
 
     const db = await getDB();
 
-    const products = await db.collection('products').find({}).toArray();
+    const products: Product[] = await db.collection<Product>('products').find({}).toArray();
 
     const ranked = products
-      .map((p: any) => {
+      .map((p: Product) => {
         const lower = p.name.toLowerCase();
         const distance = levenshtein(lower, q);
         const includes = lower.includes(q);
 
-        let relevanceScore = includes ? 0 : distance;
+        const relevanceScore = includes ? 0 : distance;
         const popularity = p.popularity ?? 0;
 
         const finalScore = relevanceScore - popularity / 100;
@@ -105,7 +111,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body: { productId?: string; eventType?: string } = await req.json();
     const { productId, eventType } = body;
 
     if (!productId || !eventType) {
@@ -120,7 +126,7 @@ export async function POST(req: Request) {
     // Auto-increment popularity based on event type
     const incrementValue = eventType === 'sale' ? 5 : 1; // sale = +5, click = +1
 
-    const result = await db.collection('products').updateOne(
+    const result = await db.collection<Product>('products').updateOne(
       { _id: new ObjectId(productId) },
       { $inc: { popularity: incrementValue } }
     );

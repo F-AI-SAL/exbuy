@@ -10,7 +10,7 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/exbuy'
 
 declare global {
   // Prevents model overwrite in Next.js hot reload
-  // eslint-disable-next-line no-var
+   
   var mongooseConn: Connection | null;
 }
 

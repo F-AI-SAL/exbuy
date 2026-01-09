@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { Transition } from '@headlessui/react';
 import { logout } from '@/utils/logout'; // ✅ Import logout helper
+import Image from 'next/image'; // ✅ Next.js optimized Image
 
 function initialsFrom(user: { firstName?: string; email?: string }) {
   if (user.firstName) return user.firstName.charAt(0).toUpperCase();
@@ -53,10 +54,12 @@ export default function UserProfile() {
                    transition-all duration-300 shadow-sm"
       >
         {user?.avatarUrl ? (
-          <img
+          <Image
             src={user.avatarUrl}
             alt={label}
-            className="h-9 w-9 rounded-full object-cover ring-2 ring-blue-500/30"
+            width={36}
+            height={36}
+            className="rounded-full object-cover ring-2 ring-blue-500/30"
           />
         ) : (
           <div
@@ -94,28 +97,31 @@ export default function UserProfile() {
                      shadow-xl origin-top-right z-30"
         >
           <ul className="py-2">
-            <li>
+            <li role="none">
               <Link
                 href="/account"
+                role="menuitem"
                 className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 
                            hover:bg-blue-50 dark:hover:bg-zinc-800 transition-colors"
               >
                 Profile
               </Link>
             </li>
-            <li>
+            <li role="none">
               <Link
                 href="/settings"
+                role="menuitem"
                 className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 
                            hover:bg-blue-50 dark:hover:bg-zinc-800 transition-colors"
               >
                 Settings
               </Link>
             </li>
-            <li>
+            <li role="none">
               {/* ✅ Logout now calls helper */}
               <button
                 onClick={logout}
+                role="menuitem"
                 className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 
                            hover:bg-red-50 dark:hover:bg-zinc-800 transition-colors font-semibold text-red-600"
               >

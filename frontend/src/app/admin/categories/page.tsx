@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 
 type Category = {
   id: number;
@@ -11,7 +12,6 @@ type Category = {
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [filtered, setFiltered] = useState<Category[]>([]);
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
   const [image, setImage] = useState<File | null>(null);
@@ -25,33 +25,34 @@ export default function AdminCategoriesPage() {
   // Search state
   const [search, setSearch] = useState('');
 
+  // ✅ Fetch categories inside effect
   useEffect(() => {
-    fetchCategories();
+    const loadCategories = async () => {
+      try {
+        const res = await fetch('/api/categories');
+        const data: Category[] = await res.json();
+        setCategories(data);
+      } catch (err) {
+        console.error('Failed to fetch categories', err);
+      }
+    };
+    loadCategories();
   }, []);
 
-  useEffect(() => {
-    handleFilter();
-  }, [search, categories]);
-
-  const fetchCategories = async () => {
-    try {
-      const res = await fetch('/api/categories');
-      const data = await res.json();
-      setCategories(data);
-      setFiltered(data);
-    } catch (err) {
-      console.error('Failed to fetch categories', err);
-    }
-  };
-
-  const handleFilter = () => {
+  // ✅ Derive filtered list using useMemo
+  const filtered = useMemo(() => {
+    if (categories.length === 0) return [];
     const q = search.toLowerCase();
-    const filteredList = categories.filter(
+    return categories.filter(
       (cat) =>
         cat.name.toLowerCase().includes(q) ||
         cat.slug.toLowerCase().includes(q)
     );
-    setFiltered(filteredList);
+  }, [search, categories]);
+
+  // ✅ Reset page when search changes (in handler, not effect)
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearch(e.target.value);
     setCurrentPage(1);
   };
 
@@ -82,7 +83,13 @@ export default function AdminCategoriesPage() {
         setSlug('');
         setImage(null);
         setEditingId(null);
-        fetchCategories();
+        // reload categories
+        const reload = async () => {
+          const res = await fetch('/api/categories');
+          const data: Category[] = await res.json();
+          setCategories(data);
+        };
+        reload();
       } else {
         setMessage({ type: 'error', text: '❌ Failed to save category.' });
       }
@@ -97,7 +104,12 @@ export default function AdminCategoriesPage() {
       const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setMessage({ type: 'success', text: '🗑️ Category deleted successfully!' });
-        fetchCategories();
+        const reload = async () => {
+          const res = await fetch('/api/categories');
+          const data: Category[] = await res.json();
+          setCategories(data);
+        };
+        reload();
       } else {
         setMessage({ type: 'error', text: '❌ Failed to delete category.' });
       }
@@ -130,7 +142,7 @@ export default function AdminCategoriesPage() {
           type="text"
           placeholder="🔍 Search categories..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={handleSearchChange}
           className="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500"
         />
       </div>
@@ -210,9 +222,11 @@ export default function AdminCategoriesPage() {
             >
               <div className="flex items-center gap-4">
                 {cat.image && cat.image.trim() !== '' ? (
-                  <img
+                  <Image
                     src={cat.image}
                     alt={cat.name}
+                    width={48}
+                    height={48}
                     className="w-12 h-12 rounded object-cover border"
                   />
                 ) : (

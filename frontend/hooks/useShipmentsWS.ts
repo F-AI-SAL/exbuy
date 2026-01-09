@@ -3,14 +3,16 @@ import { useEffect, useRef, useState } from 'react';
 
 interface Shipment {
   id: string | number;
-  [key: string]: any;
+  [key: string]: unknown; // ✅ any এর বদলে unknown
 }
 
 export function useShipmentsWS(url: string) {
   const [items, setItems] = useState<Shipment[]>([]);
   const wsRef = useRef<WebSocket | null>(null);
-  const reconnectTimer = useRef<any>(null);
-  const heartbeatRef = useRef<any>(null);
+
+  // ✅ Timer references এখন NodeJS.Timeout | null
+  const reconnectTimer = useRef<NodeJS.Timeout | null>(null);
+  const heartbeatRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -28,7 +30,7 @@ export function useShipmentsWS(url: string) {
         }, 30000);
       };
 
-      ws.onmessage = (evt) => {
+      ws.onmessage = (evt: MessageEvent) => {
         try {
           const data: Shipment = JSON.parse(evt.data);
           setItems((prev) => {
