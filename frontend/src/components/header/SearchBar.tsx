@@ -2,6 +2,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { FaSearch, FaCamera, FaClock } from 'react-icons/fa';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import Image from 'next/image'; // ✅ Next.js Image import
 
 type ImagePreview = {
   file: File;
@@ -137,6 +138,7 @@ export default function SearchBar() {
                 onClick={() => handleSearch(s)}
                 className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-800 focus:bg-gray-100 dark:focus:bg-zinc-800 focus:outline-none transition"
                 role="option"
+                aria-selected={false} // ✅ ARIA fix
               >
                 {s}
               </button>
@@ -157,6 +159,8 @@ export default function SearchBar() {
                 type="button"
                 onClick={() => handleSearch(h)}
                 className="w-full flex items-center gap-2 text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-zinc-800 transition"
+                role="option"
+                aria-selected={false} // ✅ ARIA fix
               >
                 <FaClock className="h-4 w-4 text-gray-400" />
                 {h}
@@ -170,7 +174,14 @@ export default function SearchBar() {
       {img && (
         <div className="absolute left-0 right-0 mt-2 rounded-lg border bg-white dark:bg-zinc-900 p-3 shadow-lg">
           <div className="flex items-center gap-3">
-            <img src={img.url} alt="Selected image" className="h-12 w-12 rounded object-cover" />
+            {/* ✅ Next.js Image instead of <img> */}
+            <Image
+              src={img.url}
+              alt="Selected image"
+              width={48}
+              height={48}
+              className="rounded object-cover"
+            />
             <div className="flex-1 text-sm text-gray-700 dark:text-gray-300">
               Image selected. You can clear or use it for search.
             </div>
