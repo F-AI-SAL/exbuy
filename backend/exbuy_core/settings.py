@@ -1,11 +1,11 @@
-"""
+﻿"""
 Django settings for exbuy_core project.
 """
 
 import os
 from pathlib import Path
 from datetime import timedelta
-import dj_database_url  # ✅ Railway Postgres support
+import dj_database_url  # âœ… Railway Postgres support
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -15,12 +15,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-secret-key")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
+_default_allowed_hosts = ["127.0.0.1", "localhost"]
 ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "exbuy-production.up.railway.app",
-    "exbuy.vercel.app",
+    host.strip()
+    for host in os.environ.get("ALLOWED_HOSTS", "").split(",")
+    if host.strip()
 ]
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = _default_allowed_hosts
+railway_host = os.environ.get("RAILWAY_STATIC_URL") or os.environ.get("RAILWAY_PUBLIC_DOMAIN")
+if railway_host and railway_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(railway_host)
 
 # -----------------------------
 # Custom user model
@@ -60,8 +65,9 @@ INSTALLED_APPS = [
 # Middleware
 # -----------------------------
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # ✅ must be at the very top
+    "corsheaders.middleware.CorsMiddleware",  # âœ… must be at the very top
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -73,12 +79,23 @@ MIDDLEWARE = [
 # -----------------------------
 # CORS / CSRF
 # -----------------------------
-CORS_ALLOWED_ORIGINS = [
-    "https://exbuy.vercel.app",
+CORS_ALLOWED_ORIGINS = ["https://exbuy.vercel.app"]
+_extra_cors = [
+    origin.strip()
+    for origin in os.environ.get("CORS_ALLOWED_ORIGINS", "").split(",")
+    if origin.strip()
 ]
-CSRF_TRUSTED_ORIGINS = [
-    "https://exbuy.vercel.app",
+if _extra_cors:
+    CORS_ALLOWED_ORIGINS.extend(_extra_cors)
+
+CSRF_TRUSTED_ORIGINS = ["https://exbuy.vercel.app"]
+_extra_csrf = [
+    origin.strip()
+    for origin in os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
 ]
+if _extra_csrf:
+    CSRF_TRUSTED_ORIGINS.extend(_extra_csrf)
 
 ROOT_URLCONF = "exbuy_core.urls"
 
@@ -104,13 +121,22 @@ ASGI_APPLICATION = "exbuy_core.asgi.application"
 # -----------------------------
 # Database (Railway Postgres)
 # -----------------------------
-DATABASES = {
-    "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL"),
-        conn_max_age=600,
-        ssl_require=True,
-    )
-}
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=True,
+        )
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # -----------------------------
 # Password validation
@@ -133,8 +159,9 @@ USE_TZ = True
 # -----------------------------
 # Static files
 # -----------------------------
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -190,3 +217,5 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+
