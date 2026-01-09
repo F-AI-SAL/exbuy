@@ -6,7 +6,11 @@ import {
   BellIcon,
   ChevronDownIcon,
   HeartIcon,
+  QuestionMarkCircleIcon,
   ShoppingCartIcon,
+  Squares2X2Icon,
+  UserCircleIcon,
+  WalletIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
@@ -49,6 +53,16 @@ export default function Navbar() {
   const cartCount = 3;
   const wishlistCount = 5;
   const notificationsCount = 2;
+
+  const accountMenu = [
+    { name: 'My Dashboard', href: '/dashboard', icon: <Squares2X2Icon className="h-4 w-4" /> },
+    { name: 'My Orders', href: '/orders', icon: <ShoppingCartIcon className="h-4 w-4" /> },
+    { name: 'My Shipment', href: '/shipments', icon: <Bars3Icon className="h-4 w-4" /> },
+    { name: 'Wishlist', href: '/wishlist', icon: <HeartIcon className="h-4 w-4" /> },
+    { name: 'My Wallet', href: '/wallet', icon: <WalletIcon className="h-4 w-4" /> },
+    { name: 'Support', href: '/support', icon: <QuestionMarkCircleIcon className="h-4 w-4" /> },
+    { name: 'My Profile', href: '/profile', icon: <UserCircleIcon className="h-4 w-4" /> },
+  ];
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -198,23 +212,45 @@ export default function Navbar() {
             {avatarOpen && (
               <div
                 id="account-menu"
-                className="absolute right-0 mt-2 w-48 rounded-xl border border-zinc-200 bg-white p-2 shadow-lg"
+                className="absolute right-0 mt-2 w-64 rounded-2xl border border-zinc-200 bg-white p-3 shadow-lg"
                 role="menu"
               >
-                <Link href="/account" className="block rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">
-                  Profile
-                </Link>
-                <Link href="/orders" className="block rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">
-                  Orders
-                </Link>
-                <Link href="/settings" className="block rounded-lg px-3 py-2 text-sm hover:bg-zinc-100">
-                  Settings
-                </Link>
+                <div className="border-b border-zinc-100 pb-3">
+                  <p className="text-xs text-zinc-500">Welcome to ExBuy</p>
+                  <div className="mt-2 flex items-center gap-3">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                      U
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-zinc-900">Md Faisal Al Islam</p>
+                      <span className="mt-1 inline-flex rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                        Business
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="py-2">
+                  {accountMenu.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-700 hover:bg-emerald-50"
+                      role="menuitem"
+                      onClick={() => setAvatarOpen(false)}
+                    >
+                      {item.icon}
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+
                 <button
                   onClick={logout}
-                  className="block w-full rounded-lg px-3 py-2 text-left text-sm hover:bg-zinc-100"
+                  className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-100"
                 >
-                  Logout
+                  <XMarkIcon className="h-4 w-4" />
+                  Log out
                 </button>
               </div>
             )}
