@@ -37,6 +37,207 @@ export const CATEGORIES: Category[] = [
   { label: 'More', href: '/categories' },
 ];
 
+export type MegaCategory = {
+  label: string;
+  href: string;
+  subcategories: string[];
+  featured: string[];
+};
+
+export const CATEGORY_MENU: MegaCategory[] = [
+  {
+    label: 'Fashion & Personal Style',
+    href: '/categories/fashion',
+    subcategories: [
+      'Shoes & Accessories',
+      'Apparel & Accessories',
+      'Beauty',
+      'Jewelry, Eyewear & Watches',
+      'Luggage, Bags & Cases',
+    ],
+    featured: [
+      'Chelsea Boots',
+      'Flip-Flops Slippers',
+      'Chukka Boots',
+      'Flat Sandals',
+      'Chunky Shoes',
+      'Home Slippers',
+      'Hiking Boots',
+      'Snow Boots',
+      'Rain Boots',
+      'Shoe Trees',
+      'Shoelaces',
+      'Shoe Uppers',
+      'Height Increasing Shoes',
+      'Diabetic Shoes',
+      'Safety Shoes',
+    ],
+  },
+  {
+    label: 'Home & Lifestyle',
+    href: '/categories/home',
+    subcategories: [
+      'Furniture',
+      'Kitchen & Dining',
+      'Home Decor',
+      'Lighting',
+      'Home Appliances',
+    ],
+    featured: [
+      'Air Fryers',
+      'Coffee Makers',
+      'Standing Fans',
+      'Bedding Sets',
+      'Storage Boxes',
+      'LED Lamps',
+    ],
+  },
+  {
+    label: 'Electrical & Electronics',
+    href: '/categories/electronics',
+    subcategories: [
+      'Mobile Accessories',
+      'Smart Devices',
+      'Audio & Video',
+      'Computer & Office',
+      'Security Systems',
+    ],
+    featured: [
+      'Power Banks',
+      'Bluetooth Speakers',
+      'Smart Watches',
+      'USB Hubs',
+      'IP Cameras',
+    ],
+  },
+  {
+    label: 'Family, Kids & Daily Care',
+    href: '/categories/family',
+    subcategories: [
+      'Baby Care',
+      'Kids Toys',
+      'Personal Care',
+      'Health Essentials',
+      'Household Supplies',
+    ],
+    featured: [
+      'Baby Bottles',
+      'Baby Diapers',
+      'Educational Toys',
+      'Electric Toothbrush',
+      'First Aid Kits',
+    ],
+  },
+  {
+    label: 'Agriculture & Food Industry',
+    href: '/categories/agriculture',
+    subcategories: [
+      'Farm Tools',
+      'Seeds & Fertilizer',
+      'Food Processing',
+      'Packaging',
+      'Beverage Equipment',
+    ],
+    featured: [
+      'Irrigation Kits',
+      'Seedling Trays',
+      'Vacuum Sealers',
+      'Grain Mills',
+      'Bottling Tools',
+    ],
+  },
+  {
+    label: 'Construction & Engineering',
+    href: '/categories/construction',
+    subcategories: [
+      'Power Tools',
+      'Hardware',
+      'Building Materials',
+      'Safety Gear',
+      'Machinery',
+    ],
+    featured: [
+      'Drill Sets',
+      'Wrenches',
+      'Safety Helmets',
+      'Concrete Mixers',
+      'Laser Levels',
+    ],
+  },
+  {
+    label: 'Industrial & Manufacturing',
+    href: '/categories/industrial',
+    subcategories: [
+      'Industrial Supplies',
+      'Automation',
+      'Parts & Components',
+      'Packaging Machines',
+      'Warehouse Equipment',
+    ],
+    featured: [
+      'Conveyor Belts',
+      'Servo Motors',
+      'Pallet Trucks',
+      'Control Panels',
+      'Seal Machines',
+    ],
+  },
+  {
+    label: 'Automotive & Transportation',
+    href: '/categories/automotive',
+    subcategories: [
+      'Auto Parts',
+      'Car Electronics',
+      'Tires & Wheels',
+      'Maintenance Tools',
+      'Motorbike Parts',
+    ],
+    featured: [
+      'Car Chargers',
+      'Dash Cams',
+      'Brake Pads',
+      'Tool Kits',
+      'LED Headlights',
+    ],
+  },
+  {
+    label: 'Sports, Leisure & Recreation',
+    href: '/categories/sports',
+    subcategories: [
+      'Outdoor Gear',
+      'Fitness',
+      'Cycling',
+      'Camping',
+      'Travel',
+    ],
+    featured: [
+      'Yoga Mats',
+      'Camping Tents',
+      'Water Bottles',
+      'Dumbbells',
+      'Travel Bags',
+    ],
+  },
+  {
+    label: 'Business, Packaging & Office',
+    href: '/categories/business',
+    subcategories: [
+      'Office Supplies',
+      'Printing',
+      'Packaging',
+      'Retail Displays',
+      'Stationery',
+    ],
+    featured: [
+      'Thermal Printers',
+      'Packing Tapes',
+      'Label Rolls',
+      'Display Racks',
+      'Notebooks',
+    ],
+  },
+];
+
 // ================== Services ==================
 export const SERVICES: Service[] = [
   {

@@ -1,16 +1,11 @@
 'use client';
-import { useState, useEffect, useRef, ReactNode } from 'react';
-import { CATEGORIES } from '@/lib/config';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { CATEGORY_MENU } from '@/lib/config';
 import { ChevronDownIcon } from '@heroicons/react/24/solid';
-import {
-  ShoppingBagIcon,
-  DevicePhoneMobileIcon,
-  GiftIcon,
-  SparklesIcon,
-} from '@heroicons/react/24/outline';
 
 export default function Categories() {
   const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside or pressing Escape
@@ -31,13 +26,7 @@ export default function Categories() {
     };
   }, []);
 
-  // Example icon mapping (you can extend this)
-  const iconMap: Record<string, ReactNode> = {
-    Fashion: <SparklesIcon className="h-5 w-5 text-pink-500" />,
-    Electronics: <DevicePhoneMobileIcon className="h-5 w-5 text-blue-500" />,
-    Grocery: <ShoppingBagIcon className="h-5 w-5 text-green-500" />,
-    Gifts: <GiftIcon className="h-5 w-5 text-purple-500" />,
-  };
+  const activeCategory = useMemo(() => CATEGORY_MENU[activeIndex], [activeIndex]);
 
   return (
     <div
@@ -64,25 +53,75 @@ export default function Categories() {
         <div
           id="categories-menu"
           role="menu"
-          className="absolute left-0 z-20 mt-2 w-[600px] rounded-lg border 
-                     bg-white dark:bg-zinc-900 dark:border-zinc-700 
-                     shadow-xl animate-fadeIn origin-top-left p-4 grid grid-cols-2 gap-4"
+          className="absolute left-0 z-20 mt-2 w-[980px] rounded-2xl border border-slate-200
+                     bg-white shadow-2xl animate-fadeIn origin-top-left"
         >
-          {CATEGORIES.map((c) => (
-            <a
-              key={c.href}
-              href={c.href}
-              role="menuitem"
-              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm 
-                         text-gray-700 dark:text-gray-200 
-                         hover:bg-blue-50 dark:hover:bg-zinc-800 
-                         focus:bg-blue-100 dark:focus:bg-zinc-700 
-                         transition-colors"
-            >
-              {iconMap[c.label] ?? <ChevronDownIcon className="h-5 w-5 text-gray-400" />}
-              <span>{c.label}</span>
-            </a>
-          ))}
+          <div className="grid grid-cols-[260px_240px_1fr] gap-0">
+            <div className="max-h-[420px] overflow-y-auto border-r border-slate-100 p-3">
+              {CATEGORY_MENU.map((category, index) => (
+                <button
+                  key={category.label}
+                  type="button"
+                  onMouseEnter={() => setActiveIndex(index)}
+                  onFocus={() => setActiveIndex(index)}
+                  className={`w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors ${
+                    activeIndex === index
+                      ? 'bg-slate-100 text-slate-900'
+                      : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  {category.label}
+                </button>
+              ))}
+            </div>
+            <div className="border-r border-slate-100 p-4">
+              <p className="text-sm font-semibold text-slate-900">
+                {activeCategory.label}
+              </p>
+              <div className="mt-3 space-y-2">
+                {activeCategory.subcategories.map((item) => (
+                  <a
+                    key={item}
+                    href={activeCategory.href}
+                    className="block rounded-md px-2 py-1 text-sm text-slate-700 hover:bg-slate-50"
+                  >
+                    {item}
+                  </a>
+                ))}
+              </div>
+            </div>
+            <div className="p-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-semibold text-slate-900">
+                  {activeCategory.subcategories[0]}
+                </p>
+                <a
+                  href={activeCategory.href}
+                  className="text-xs font-semibold text-emerald-600 hover:text-emerald-700"
+                >
+                  Explore more →
+                </a>
+              </div>
+              <div className="mt-4 grid grid-cols-5 gap-3">
+                {activeCategory.featured.map((item) => (
+                  <a
+                    key={item}
+                    href={activeCategory.href}
+                    className="group flex flex-col items-center gap-2 text-center"
+                  >
+                    <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 p-2 text-[10px] font-semibold text-slate-500 shadow-sm group-hover:from-emerald-50 group-hover:to-emerald-100">
+                      {item
+                        .split(' ')
+                        .slice(0, 2)
+                        .map((word) => word[0])
+                        .join('')}
+                    </div>
+                    <span className="text-[11px] text-slate-700">{item}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
