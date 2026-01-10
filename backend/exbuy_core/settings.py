@@ -1,11 +1,12 @@
-﻿"""
+"""
 Django settings for exbuy_core project.
 """
 
 import os
-from pathlib import Path
 from datetime import timedelta
-import dj_database_url  # âœ… Railway Postgres support
+from pathlib import Path
+
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,6 +24,7 @@ ALLOWED_HOSTS = [
 ]
 if not ALLOWED_HOSTS:
     ALLOWED_HOSTS = _default_allowed_hosts
+
 railway_host = os.environ.get("RAILWAY_STATIC_URL") or os.environ.get("RAILWAY_PUBLIC_DOMAIN")
 if railway_host and railway_host not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(railway_host)
@@ -36,22 +38,17 @@ AUTH_USER_MODEL = "accounts.User"
 # Django Apps
 # -----------------------------
 INSTALLED_APPS = [
-    # Default Django apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    # Third-party apps
     "rest_framework",
     "drf_spectacular",
     "corsheaders",
     "django_filters",
     "channels",
-
-    # Local apps
     "shipments",
     "accounts",
     "merchants",
@@ -59,14 +56,16 @@ INSTALLED_APPS = [
     "billing",
     "tracking",
     "ops",
+    "catalog",
 ]
 
 # -----------------------------
 # Middleware
 # -----------------------------
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # âœ… must be at the very top
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "exbuy_core.middleware.RequestIdMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -139,6 +138,18 @@ else:
     }
 
 # -----------------------------
+# Cache (Redis)
+# -----------------------------
+REDIS_URL = os.environ.get("REDIS_URL", "redis://127.0.0.1:6379")
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": REDIS_URL,
+        "TIMEOUT": 300,
+    }
+}
+
+# -----------------------------
 # Password validation
 # -----------------------------
 AUTH_PASSWORD_VALIDATORS = [
@@ -204,18 +215,57 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
+    "ISSUER": os.environ.get("JWT_ISSUER", "exbuy-api"),
 }
 
 # -----------------------------
-# Channels / Redis Layer (Railway Redis)
+# Channels / Redis Layer
 # -----------------------------
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.environ.get("REDIS_URL", "redis://127.0.0.1:6379")],
+            "hosts": [REDIS_URL],
         },
     },
 }
 
+# -----------------------------
+# Security headers / cookies
+# -----------------------------
+SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "True") == "True"
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "31536000"))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
 
+# -----------------------------
+# Logging
+# -----------------------------
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "json": {
+            "format": "{\"level\":\"%(levelname)s\",\"time\":\"%(asctime)s\",\"logger\":\"%(name)s\",\"message\":\"%(message)s\"}",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "json",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": os.environ.get("LOG_LEVEL", "INFO"),
+    },
+}

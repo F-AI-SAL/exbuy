@@ -7,7 +7,12 @@ export interface ApiError extends Error {
 export type ApiResponse<T = any> = T | string;
 
 export async function api<T = any>(path: string, opts: RequestInit = {}): Promise<ApiResponse<T>> {
-  const base = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000';
+  const rawBase = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8000';
+  const isProd = process.env.NODE_ENV === 'production';
+  if (isProd && !rawBase.startsWith('https://')) {
+    throw new Error('NEXT_PUBLIC_API_BASE must be https in production');
+  }
+  const base = rawBase;
   const url = `${base}${path}`;
 
   try {
