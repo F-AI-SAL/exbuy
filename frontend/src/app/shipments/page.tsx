@@ -36,6 +36,11 @@ export default function ShipmentsPage() {
         <DashboardSidebar />
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">My Shipments</h1>
+          {!wsUrl && (
+            <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              Live shipment updates are disabled. Set `NEXT_PUBLIC_SHIPMENTS_WS_URL` to enable real-time tracking.
+            </div>
+          )}
 
           <div className="flex flex-wrap gap-2 border-b dark:border-zinc-700 mb-6">
             {statusTabs.map((tab) => (
