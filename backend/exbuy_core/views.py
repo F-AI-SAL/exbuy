@@ -8,7 +8,7 @@ from orders.models import Order
 
 
 @require_GET
-def popular_products(request):
+def popular_products(_request):
     """Return demo popular products for the home page."""
     return JsonResponse({
         "results": [
@@ -29,7 +29,7 @@ def popular_products(request):
 
 
 @require_GET
-def analyst_choice(request):
+def analyst_choice(_request):
     """Return demo analyst choice products for the home page."""
     return JsonResponse({
         "results": [
@@ -54,8 +54,8 @@ def home(request):
     """Return dashboard data based on the authenticated user's role."""
     role = getattr(request.user, "role", "guest")
     stats = {
-        "merchants": Merchant.objects.count(),
-        "orders": Order.objects.count(),
+        "merchants": Merchant.objects.count(),  # type: ignore[attr-defined]
+        "orders": Order.objects.count(),  # type: ignore[attr-defined]
     }
     cards = {
         "admin": [
