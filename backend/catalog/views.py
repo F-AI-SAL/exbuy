@@ -3,9 +3,10 @@ import hashlib
 from django.core.cache import cache
 from django.http import HttpResponseNotModified
 from django.shortcuts import get_object_or_404
+from django.utils.decorators import method_decorator
 from django.utils.http import http_date
 from django.utils.timezone import is_naive, make_aware
-from ratelimit.decorators import ratelimit
+from django_ratelimit.decorators import ratelimit
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,10 +16,10 @@ from .models import Product
 from .serializers import ProductSerializer
 
 
+@method_decorator(ratelimit(key="ip", rate="60/m", block=True), name="dispatch")
 class ProductDetailView(APIView):
     permission_classes = [IsAuthenticated]
 
-    @ratelimit(key="ip", rate="60/m", block=True)
     def get(self, request, slug):
         cache_key = f"product:detail:{slug}"
         cached = cache.get(cache_key)

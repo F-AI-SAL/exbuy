@@ -19,4 +19,4 @@ class AuditLog(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
-        return f\"{self.action} {self.resource}\"
+        return f"{self.action} {self.resource}"
