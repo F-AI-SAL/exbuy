@@ -12,6 +12,7 @@ import {
   CheckCircleIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
+import DashboardSidebar from '@/components/dashboard/Sidebar';
 
 export default function DashboardPage() {
   const overviewItems = [
@@ -37,10 +38,13 @@ export default function DashboardPage() {
   ];
 
   return (
-    <main className="mx-auto max-w-7xl space-y-10 px-6 py-10">
-      <section>
-        <h1 className="text-lg font-semibold text-zinc-900">Overview</h1>
-        <div className="mt-5 grid grid-cols-2 gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-3 lg:grid-cols-5">
+    <main className="mx-auto max-w-7xl px-6 py-10">
+      <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+        <DashboardSidebar />
+        <div className="space-y-10">
+          <section>
+            <h1 className="text-lg font-semibold text-zinc-900">Overview</h1>
+            <div className="mt-5 grid grid-cols-2 gap-4 rounded-2xl bg-white p-6 shadow-sm sm:grid-cols-3 lg:grid-cols-5">
           {overviewItems.map((item) => (
             <Link
               key={item.label}
@@ -106,6 +110,8 @@ export default function DashboardPage() {
           ))}
         </div>
       </section>
+        </div>
+      </div>
     </main>
   );
 }

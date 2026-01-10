@@ -7,10 +7,14 @@ import {
   PhoneIcon,
   MapPinIcon,
 } from '@heroicons/react/24/outline';
+import DashboardSidebar from '@/components/dashboard/Sidebar';
 
 export default function SupportPage() {
   return (
     <main className="max-w-7xl mx-auto px-6 py-12 bg-gradient-to-br from-white via-blue-50 to-blue-100 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 rounded-2xl shadow-xl">
+      <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+        <DashboardSidebar />
+        <div>
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-4">
@@ -154,6 +158,8 @@ export default function SupportPage() {
           <Link href="#" className="hover:underline">
             Privacy Policy
           </Link>
+        </div>
+      </div>
         </div>
       </div>
     </main>

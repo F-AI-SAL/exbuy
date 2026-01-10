@@ -2,6 +2,7 @@
 import  useShipmentsWS  from '@/hooks/useShipmentsWS';
 import { useState } from 'react';
 import Link from 'next/link';
+import DashboardSidebar from '@/components/dashboard/Sidebar';
 
 const statusTabs = [
   { key: 'all', label: 'All', count: 1 },
@@ -29,8 +30,11 @@ export default function ShipmentsPage() {
   const endIndex = Math.min(currentPage * pageSize, totalShipments);
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">My Shipments</h1>
+    <main className="max-w-7xl mx-auto px-4 py-10">
+      <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+        <DashboardSidebar />
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">My Shipments</h1>
 
       {/* Status Tabs */}
       <div className="flex flex-wrap gap-2 border-b dark:border-zinc-700 mb-6">
@@ -255,6 +259,8 @@ export default function ShipmentsPage() {
           >
             Next
           </button>
+        </div>
+      </div>
         </div>
       </div>
     </main>

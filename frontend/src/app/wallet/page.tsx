@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import DashboardSidebar from '@/components/dashboard/Sidebar';
 
 const balances = [
   { currency: '৳', label: 'BDT', available: 0, pending: 0, hold: 0 },
@@ -63,6 +64,9 @@ export default function WalletPage() {
 
   return (
     <main className="max-w-6xl mx-auto px-6 py-12 bg-gradient-to-br from-white via-green-50 to-green-100 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 rounded-2xl shadow-xl">
+      <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+        <DashboardSidebar />
+        <div>
       <h1 className="text-3xl font-extrabold text-gray-900 dark:text-white mb-8">💰 My Balance</h1>
 
       {/* Balance Cards */}
@@ -180,6 +184,8 @@ export default function WalletPage() {
             )}
           </div>
         ))}
+      </div>
+        </div>
       </div>
     </main>
   );

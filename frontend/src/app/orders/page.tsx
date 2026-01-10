@@ -4,18 +4,13 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  AdjustmentsHorizontalIcon,
   ArrowDownTrayIcon,
-  CheckCircleIcon,
-  ChevronRightIcon,
-  ClockIcon,
-  ExclamationTriangleIcon,
   FunnelIcon,
   ShoppingBagIcon,
   TruckIcon,
-  WalletIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import DashboardSidebar from '@/components/dashboard/Sidebar';
 
 const statusTabs = [
   { key: 'all', label: 'All', count: 20 },
@@ -28,22 +23,6 @@ const statusTabs = [
   { key: 'completed', label: 'Completed', count: 6 },
   { key: 'refund', label: 'Refund', count: 3 },
   { key: 'cancelled', label: 'Cancelled', count: 2 },
-];
-
-const sidebarItems = [
-  { label: 'Overview', href: '/dashboard' },
-  { label: 'Buy & Ship for me', href: '/orders' },
-  { label: 'My Orders', href: '/orders', active: true },
-  { label: 'My Delivery', href: '/shipments' },
-  { label: 'Ship for me', href: '/shipments' },
-  { label: 'Action Needed', href: '/actions' },
-  { label: 'RFQ Management', href: '/rfq' },
-  { label: 'Wishlist', href: '/wishlist' },
-  { label: 'Notification', href: '/notifications' },
-  { label: 'My Wallet', href: '/wallet' },
-  { label: 'Transactions', href: '/wallet' },
-  { label: 'Refund', href: '/refunds' },
-  { label: 'My Profile', href: '/profile' },
 ];
 
 const orders = [
@@ -83,30 +62,9 @@ export default function OrdersPage() {
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-8">
-      <div className="rounded-2xl bg-emerald-50/60 p-4">
-        <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
-          <aside className="hidden rounded-2xl bg-white p-5 shadow-sm lg:block">
-            <div className="border-b border-zinc-100 pb-4">
-              <p className="text-xs text-zinc-500">Good Late Night!</p>
-              <p className="text-sm font-semibold text-zinc-900">Md Faisal Al Islam</p>
-            </div>
-            <nav className="mt-4 flex flex-col gap-1 text-sm text-zinc-700">
-              {sidebarItems.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className={`flex items-center justify-between rounded-lg px-3 py-2 transition ${
-                    item.active
-                      ? 'bg-emerald-50 text-emerald-700 font-semibold'
-                      : 'hover:bg-zinc-50'
-                  }`}
-                >
-                  <span>{item.label}</span>
-                  <ChevronRightIcon className="h-4 w-4 text-zinc-400" />
-                </Link>
-              ))}
-            </nav>
-          </aside>
+        <div className="rounded-2xl bg-emerald-50/60 p-4">
+          <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
+          <DashboardSidebar />
 
           <section className="space-y-6">
             <div className="rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 p-4 text-white shadow-sm">

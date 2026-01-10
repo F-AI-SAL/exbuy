@@ -11,6 +11,7 @@ import {
   PencilSquareIcon,
   PlusCircleIcon,
 } from '@heroicons/react/24/outline';
+import DashboardSidebar from '@/components/dashboard/Sidebar';
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState('info');
@@ -38,6 +39,9 @@ export default function ProfilePage() {
 
   return (
     <main className="max-w-5xl mx-auto px-6 py-12 bg-gradient-to-br from-white via-blue-50 to-blue-100 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 rounded-2xl shadow-xl">
+      <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+        <DashboardSidebar />
+        <div>
       {/* Header */}
       <div className="flex items-center gap-6 mb-10 border-b pb-6 dark:border-zinc-700">
         <Image
@@ -182,6 +186,8 @@ export default function ProfilePage() {
           </div>
         </section>
       )}
+        </div>
+      </div>
     </main>
   );
 }

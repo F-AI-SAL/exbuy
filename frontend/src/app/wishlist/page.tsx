@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import DashboardSidebar from '@/components/dashboard/Sidebar';
 
 export default function WishlistPage() {
   const wishlistItems = [
@@ -10,6 +11,9 @@ export default function WishlistPage() {
 
   return (
     <main className="px-6 py-16 max-w-7xl mx-auto">
+      <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+        <DashboardSidebar />
+        <div>
       {/* Breadcrumb */}
       <nav className="text-sm mb-6 text-zinc-600 dark:text-zinc-400">
         <ol className="flex items-center space-x-2">
@@ -95,6 +99,8 @@ export default function WishlistPage() {
           </a>
         </div>
       )}
+        </div>
+      </div>
     </main>
   );
 }
