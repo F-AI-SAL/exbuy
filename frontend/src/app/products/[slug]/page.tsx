@@ -19,7 +19,8 @@ export const revalidate = 300;
 
 async function fetchProduct(slug: string): Promise<Product | null> {
   const base = getApiBase();
-  const token = cookies().get('token')?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
   const res = await fetch(`${base}/api/products/${slug}/`, {
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
