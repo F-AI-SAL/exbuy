@@ -16,6 +16,7 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import SearchBar from './header/SearchBar';
+import Categories from './header/Categories';
 import { logout } from '@/utils/logout';
 
 interface MenuItem {
@@ -37,18 +38,10 @@ const services: MenuItem[] = [
   { name: 'ExBuy Live', href: '/live' },
 ];
 
-const categoryItems: MenuItem[] = [
-  { name: 'Fashion', href: '/categories' },
-  { name: 'Home & Lifestyle', href: '/categories' },
-  { name: 'Electronics', href: '/categories' },
-  { name: 'Sports & Outdoors', href: '/categories' },
-];
-
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [categoriesOpen, setCategoriesOpen] = useState(false);
 
   const cartCount = 3;
   const wishlistCount = 5;
@@ -95,37 +88,8 @@ export default function Navbar() {
             <span className="text-lg font-extrabold tracking-tight text-zinc-900">ExBuy</span>
           </Link>
 
-          <div className="relative hidden md:block">
-            <button
-              type="button"
-              onClick={() => setCategoriesOpen((open) => !open)}
-              className="flex items-center gap-1 rounded-full border border-zinc-200 px-3 py-2 text-sm font-medium text-zinc-700 hover:border-emerald-500 hover:text-emerald-700"
-              aria-label="Categories"
-              aria-expanded={categoriesOpen}
-              aria-controls="categories-menu"
-            >
-              Categories
-              <ChevronDownIcon className="h-4 w-4" />
-            </button>
-            {categoriesOpen && (
-              <div
-                id="categories-menu"
-                className="absolute left-0 top-12 z-30 w-60 rounded-xl border border-zinc-200 bg-white p-2 shadow-lg"
-                role="menu"
-              >
-                {categoryItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="block rounded-lg px-3 py-2 text-sm text-zinc-700 hover:bg-emerald-50"
-                    role="menuitem"
-                    onClick={() => setCategoriesOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-            )}
+          <div className="hidden md:block">
+            <Categories />
           </div>
         </div>
 
