@@ -3,6 +3,7 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Manrope } from 'next/font/google';
 import Navbar from '@/components/Navbar';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const manrope = Manrope({
   subsets: ['latin'],
@@ -43,6 +44,7 @@ export default function RootLayout({
         <footer className="border-t border-zinc-200 bg-white py-6 text-center text-sm text-zinc-500">
           (c) {new Date().getFullYear()} ExBuy. All rights reserved.
         </footer>
+        <SpeedInsights />
       </body>
     </html>
   );
